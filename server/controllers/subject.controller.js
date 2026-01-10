@@ -180,10 +180,10 @@ const getTagsBySubjectId = async (req, res) => {
             const tag_type = tag.doc_type;
             let specific_tag_type = tag_type.split('/')[1];
             if (specific_tag_type.includes('document')) specific_tag_type = 'doc';
-            
+
             else if (specific_tag_type.includes('jpeg') || specific_tag_type.includes('jpg') || specific_tag_type.includes('png')) specific_tag_type = 'image';
 
-            else if(specific_tag_type.includes('plain')) specific_tag_type = 'note';
+            else if (specific_tag_type.includes('plain')) specific_tag_type = 'note';
 
             tags.push(specific_tag_type);
         })
@@ -247,6 +247,128 @@ const deleteDocument = async (req, res) => {
     }
 }
 
+const getNumberOfDocuments = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { count, error } = await supabase
+            .from('documents')
+            .select('*', {
+                count: 'exact',
+                head: true
+            })
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+
+        return res.status(200).json({ success: true, message: "Document count fetched successfully", count });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getNumberOfSubjects = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { count, error } = await supabase
+            .from('subjects')
+            .select('*', {
+                count: 'exact',
+                head: true
+            })
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+
+        return res.status(200).json({ success: true, message: "Subject count fetched successfully", count });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getNumberOfPdfNotes = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { count, error } = await supabase
+            .from('documents')
+            .select('*', {
+                count: 'exact',
+                head: true
+            })
+            .eq('doc_type', 'application/pdf');
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+
+        return res.status(200).json({ success: true, message: "Pdf count fetched successfully", count });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getRecentCreatedSubjects = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { data, error } = await supabase
+            .from('subjects')
+            .select('*')
+            .order('created_at', { ascending: true })
+            .limit(3);
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+        return res.status(200).json({ success: true, message: "Latest documents fetched successfully", data });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getRecentCreatedDocuments = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { data, error } = await supabase
+            .from('documents')
+            .select('*')
+            .order('created_at', { ascending: true })
+            .limit(5);
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+        return res.status(200).json({ success: true, message: "Latest documents fetched successfully", data });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     insertSubject,
     getAllSubjects,
@@ -254,5 +376,10 @@ export {
     getSubjectById,
     fetchDocumentsBySubjectId,
     getTagsBySubjectId,
-    deleteDocument
+    deleteDocument,
+    getNumberOfDocuments,
+    getNumberOfSubjects,
+    getNumberOfPdfNotes,
+    getRecentCreatedSubjects,
+    getRecentCreatedDocuments
 }

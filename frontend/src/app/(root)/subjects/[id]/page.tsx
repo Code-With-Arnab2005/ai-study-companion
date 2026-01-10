@@ -54,10 +54,10 @@ const SubjectPage = () => {
 
   useEffect(() => {
     fetchSubject();
-    fetDocuments();
+    fetchDocuments();
   }, [])
 
-  const fetDocuments = async () => {
+  const fetchDocuments = async () => {
     if (!subject_id) {
       toast.error("Subject id not found");
       return;
@@ -98,7 +98,7 @@ const SubjectPage = () => {
         </div>
 
         {/* Upload Card */}
-        <FileUploadCard />
+        <FileUploadCard fetchSubject={fetchSubject} fetchDocuments={fetchDocuments} />
 
         {/* Uploaded Files Section */}
         <div>
@@ -110,7 +110,7 @@ const SubjectPage = () => {
           <div className="border-2 border-gray-300 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-h-[35vh] overflow-y-scroll">
             {documents.map((document: Document) => (
               <div key={document.id}>
-                <FileCard document={document} fetDocuments={fetDocuments} />
+                <FileCard document={document} fetchDocuments={fetchDocuments} fetchSubject={fetchSubject} />
               </div>
             ))}
 

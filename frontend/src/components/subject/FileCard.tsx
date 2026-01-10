@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 
-const FileCard = ({ document, fetDocuments }: { document: Document, fetDocuments: any }) => {
+const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Document, fetchDocuments: any, fetchSubject: any }) => {
     const [open, setOpen] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [createdTimeOfDocument, setCreatedAtTimeofDocuemnt] = useState("-");
@@ -86,7 +86,8 @@ const FileCard = ({ document, fetDocuments }: { document: Document, fetDocuments
             return;
         }
         toast.success(`Document ${document.doc_name} deleted successfully`);
-        fetDocuments();
+        fetchDocuments();
+        fetchSubject();
     }
 
     useEffect(() => {
@@ -101,7 +102,6 @@ const FileCard = ({ document, fetDocuments }: { document: Document, fetDocuments
         <>
             {/* CARD */}
             <div
-                onClick={openPreview}
                 className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm transform transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-md hover:cursor-pointer hover:bg-gray-100"
             >
                 <div className="flex items-center gap-3 mb-2">
@@ -124,6 +124,11 @@ const FileCard = ({ document, fetDocuments }: { document: Document, fetDocuments
                         onClick={handleDelteFile}
                         className="bg-red-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-red-600 hover:cursor-pointer">
                         Delete
+                    </button>
+                    <button
+                        onClick={openPreview}
+                        className="bg-green-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-green-600 hover:cursor-pointer">
+                        View
                     </button>
                 </div>
             </div>

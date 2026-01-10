@@ -6,7 +6,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast';
 import { Spinner } from '../ui/spinner';
 
-const FileUploadCard = () => {
+const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, fetchDocuments: any}) => {
     const [loading, setLoading] = useState(false);
 
     const params = useParams();
@@ -63,7 +63,12 @@ const FileUploadCard = () => {
                 setFile(null);
             }
         }
+
+        setDocName("");
+        setFile(null);
         setLoading(false);
+        fetchSubject();
+        fetchDocuments();
     }
 
     return (
