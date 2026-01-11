@@ -108,4 +108,4 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
     )
 }
 
-export default FileUploadCard
+export default FileUploadCard;

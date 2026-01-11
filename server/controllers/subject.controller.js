@@ -3,14 +3,14 @@ import { supabase } from "../lib/supabase/supabaseClient.js";
 
 const insertSubject = async (req, res) => {
     try {
-        const { subject_name } = req.body;
-        if (!subject_name) {
-            return res.status(400).json({ success: false, message: "All fields are required" });
-        }
-
         const user = await getUserFromToken(req);
         if (!user) {
             return res.status(500).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { subject_name } = req.body;
+        if (!subject_name) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
         const { error } = await supabase
@@ -34,6 +34,33 @@ const insertSubject = async (req, res) => {
     }
 }
 
+const deleteSubject = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { subject_id } = req.body;
+        if (!subject_id) {
+            return res.status(400).json({ success: false, message: "Subject id not found" });
+        }
+
+        const { error } = await supabase
+            .from('subjects')
+            .delete()
+            .eq('id', subject_id);
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+        return res.status(200).json({ success: true, message: "Subject deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 const getAllSubjects = async (req, res) => {
     try {
         const user = await getUserFromToken(req);
@@ -45,6 +72,7 @@ const getAllSubjects = async (req, res) => {
             .from('subjects')
             .select('*')
             .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -141,7 +169,8 @@ const fetchDocumentsBySubjectId = async (req, res) => {
         const { data, error } = await supabase
             .from('documents')
             .select('*')
-            .eq('subject_id', subject_id);
+            .eq('subject_id', subject_id)
+            .order('created_at', { ascending: false });
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -260,6 +289,7 @@ const getNumberOfDocuments = async (req, res) => {
                 count: 'exact',
                 head: true
             })
+            .eq('user_id', user.id);
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -285,6 +315,7 @@ const getNumberOfSubjects = async (req, res) => {
                 count: 'exact',
                 head: true
             })
+            .eq('user_id', user.id);
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -310,7 +341,8 @@ const getNumberOfPdfNotes = async (req, res) => {
                 count: 'exact',
                 head: true
             })
-            .eq('doc_type', 'application/pdf');
+            .eq('doc_type', 'application/pdf')
+            .eq('user_id', user.id);
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -333,12 +365,14 @@ const getRecentCreatedSubjects = async (req, res) => {
         const { data, error } = await supabase
             .from('subjects')
             .select('*')
-            .order('created_at', { ascending: true })
-            .limit(3);
+            .order('created_at', { ascending: false })
+            .limit(4)
+            .eq('user_id', user.id);
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
         }
+
         return res.status(200).json({ success: true, message: "Latest documents fetched successfully", data });
     } catch (error) {
         console.log(error.message);
@@ -356,8 +390,9 @@ const getRecentCreatedDocuments = async (req, res) => {
         const { data, error } = await supabase
             .from('documents')
             .select('*')
-            .order('created_at', { ascending: true })
-            .limit(5);
+            .order('created_at', { ascending: false })
+            .limit(5)
+            .eq('user_id', user.id);
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -371,6 +406,7 @@ const getRecentCreatedDocuments = async (req, res) => {
 
 export {
     insertSubject,
+    deleteSubject,
     getAllSubjects,
     addDocument,
     getSubjectById,

@@ -2,16 +2,38 @@
 import AddSubjectButton from '@/components/subject/AddSubjectButton';
 import AddSubjectModal from '@/components/subject/AddSubjectModal';
 import SubjectShowingGrid from '@/components/subject/SubjectShowingGrid';
-import React, { useState } from 'react'
+import { fetchAllSubjects } from '@/lib/actions/subject-actions';
+import { Subject } from '@/types';
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast';
 
 const page = () => {
     const [subjectName, setSubjectName] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const handleModalClose = () => {
         setIsModalOpen(false)
         setSubjectName("");
     }
+
+    const fetchSubjects = async () => {
+        const res = await fetchAllSubjects();
+        if (!res?.data) {
+            toast.error("Something went wrong, please try again later");
+        } else if (!res?.data.success) {
+            toast.error(res.data.message);
+        } else {
+            const data = res?.data.data;
+            setSubjects(data)
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        fetchSubjects();
+    }, [])
     
     return (
         <main className="min-h-screen bg-linear-to-br from-slate-100 via-indigo-100 to-purple-100 mt-15">
@@ -26,10 +48,11 @@ const page = () => {
                 </div>
 
                 {/* Subjects Grid */}
-                <SubjectShowingGrid />
+                <SubjectShowingGrid subjects={subjects} loading={loading}/>
 
                 {/* Modal */}
                 <AddSubjectModal
+                    fetchSubjects={fetchSubjects}
                     setSubjectName={setSubjectName}
                     subjectName={subjectName}
                     isOpen={isModalOpen}

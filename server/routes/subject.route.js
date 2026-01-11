@@ -1,9 +1,10 @@
 import express from 'express';
-import { addDocument, deleteDocument, fetchDocumentsBySubjectId, getAllSubjects, getNumberOfDocuments, getNumberOfPdfNotes, getNumberOfSubjects, getRecentCreatedDocuments, getRecentCreatedSubjects, getSubjectById, getTagsBySubjectId, insertSubject } from '../controllers/subject.controller.js';
+import { addDocument, deleteDocument, deleteSubject, fetchDocumentsBySubjectId, getAllSubjects, getNumberOfDocuments, getNumberOfPdfNotes, getNumberOfSubjects, getRecentCreatedDocuments, getRecentCreatedSubjects, getSubjectById, getTagsBySubjectId, insertSubject } from '../controllers/subject.controller.js';
 
 const router = express.Router();
 
 router.post("/add-subject", insertSubject);
+router.delete("/delete-subject", deleteSubject);
 router.get("/get-all-subject", getAllSubjects);
 router.post("/add-document", addDocument);
 router.post("/get-subject-by-id", getSubjectById);

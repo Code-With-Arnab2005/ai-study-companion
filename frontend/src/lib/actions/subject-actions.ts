@@ -16,6 +16,17 @@ export const insertSubject = async (data: any) => {
     }
 }
 
+export const deleteSubject = async (subject_id: string) => {
+    try {
+        const res = await axios.delete("/delete-subject", {
+            data: { subject_id }
+        })
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
 export const fetchAllSubjects = async () => {
     try {
         const res = await axios.get("/get-all-subject");
@@ -67,6 +78,51 @@ export const deleteDocument = async (doc_id: string) => {
         const res = await axios.delete("/delete-document-by-id", {
             data: { doc_id }
         })
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
+export const fetchTotalNumberOfSubjects = async () => {
+    try {
+        const res = await axios.get("/get-count-of-subjects")
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
+export const fetchTotalNumberOfDocuments = async () => {
+    try {
+        const res = await axios.get("/get-count-of-documents")
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
+export const fetchNumberOfPDFdocs = async () => {
+    try {
+        const res = await axios.get("/get-count-of-pdf-docs")
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
+export const fetchRecentSubjects = async () => {
+    try {
+        const res = await axios.get("/get-recent-subjects")
+        return res;
+    } catch (error: any) {
+        toast.error(error.message);
+    }
+}
+
+export const fetchRecentDocuments = async () => {
+    try {
+        const res = await axios.get("/get-recent-documents")
         return res;
     } catch (error: any) {
         toast.error(error.message);

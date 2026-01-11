@@ -1,11 +1,10 @@
 "use client";
-
 import { insertSubject } from "@/lib/actions/subject-actions";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 
 type Props = {
+  fetchSubjects: any;
   setSubjectName: any;
   subjectName: any;
   isOpen: boolean;
@@ -13,9 +12,8 @@ type Props = {
   onClose: () => void;
 };
 
-const AddSubjectModal = ({ setSubjectName, subjectName, isOpen, setIsModalOpen, onClose }: Props) => {
+const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, setIsModalOpen, onClose }: Props) => {
   
-
   const handleAddSubject = async () => {
     if (!subjectName || subjectName.length === 0) {
       toast.error("Subject name is requried");
@@ -38,6 +36,7 @@ const AddSubjectModal = ({ setSubjectName, subjectName, isOpen, setIsModalOpen, 
 
     setIsModalOpen(false);
     setSubjectName("");
+    fetchSubjects();
   }
 
   if (!isOpen) return null;

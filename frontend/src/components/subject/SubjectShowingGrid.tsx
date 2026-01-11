@@ -1,29 +1,15 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Subject } from '@/types';
-import { fetchAllSubjects, getTagsBySubjectId } from '@/lib/actions/subject-actions';
+import { getTagsBySubjectId } from '@/lib/actions/subject-actions';
 import Loader from '../Loader';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { ArrowBigRight } from 'lucide-react';
 
-const SubjectShowingGrid = () => {
-    const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
+const SubjectShowingGrid = ({ subjects, loading }: { subjects: Subject[], loading: boolean }) => {
 
-    const fetchSubjects = async () => {
-        const res = await fetchAllSubjects();
-        if (!res?.data) {
-            toast.error("Something went wrong, please try again later");
-        } else if (!res?.data.success) {
-            toast.error(res.data.message);
-        } else {
-            const data = res?.data.data;
-            setSubjects(data)
-        }
-        setLoading(false);
-    }
+    const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
 
     const setSubjectTagsBySubjectId = async () => {
         if (!subjects) {
@@ -58,10 +44,6 @@ const SubjectShowingGrid = () => {
     }
 
     useEffect(() => {
-        fetchSubjects();
-    }, [])
-
-    useEffect(() => {
         if (subjects.length === 0) return;
         setSubjectTagsBySubjectId();
     }, [subjects])
@@ -69,31 +51,47 @@ const SubjectShowingGrid = () => {
     if (loading) return <Loader />
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-4 px-4
+                overflow-y-auto max-h-[70vh]
+                scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
+
             {subjects?.length === 0 && (
-                <p>No Subjects, Please add your subject</p>
+                <p className="text-sm text-slate-500">
+                    No subjects found. Start by adding one.
+                </p>
             )}
+
             {subjects?.length > 0 && subjects.map((subject: Subject) => (
-                <Link href={`/subjects/${subject.id}`} key={subject.id}>
                     <div
-                        className="bg-white border border-gray-200 rounded-xl p-6 transform transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-md hover:cursor-pointer h-[25vh]"
+                        key={subject.id}
+                        className="group bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-indigo-300 h-[26vh] flex flex-col justify-between"
                     >
-                        {/* SUBJECT NAME */}
-                        <div className='flex flex-row justify-between'>
-                            <h3 className="text-lg font-semibold text-gray-800">
-                                {subject.subject_name}
-                            </h3>
-                            <ArrowBigRight fill='black'/>
+
+                        {/* Header */}
+                        <div className="flex justify-between items-start">
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-lg font-semibold text-slate-800 group-hover:text-indigo-600 transition">
+                                    {subject.subject_name}
+                                </h3>
+                                <ArrowBigRight
+                                    className="text-slate-400 group-hover:text-indigo-500 transition"
+                                    size={18}
+                                />
+                            </div>
+                            <Link href={`/subjects/${subject.id}`} >
+                                <button
+                                    className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
+                                >
+                                    View
+                                </button>
+                            </Link>
                         </div>
 
-                        {/* META INFO */}
-                        <div className="mt-3 space-y-1 text-sm text-gray-500">
+                        {/* Meta Info */}
+                        <div className="mt-3 space-y-1 text-sm text-slate-500">
+                            <p>📄 {subject.no_of_documents ?? 0} Documents</p>
                             <p>
-                                📄 {subject.no_of_documents ?? 0} Documents
-                            </p>
-
-                            <p>
-                                📅 Created on{" "}
+                                📅{" "}
                                 {subject.created_at
                                     ? new Date(subject.created_at).toLocaleDateString("en-IN", {
                                         day: "2-digit",
@@ -104,23 +102,46 @@ const SubjectShowingGrid = () => {
                             </p>
                         </div>
 
-                        {/* TAGS / TYPE INFO */}
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            {subject.id && subjectToTags.get(subject.id)?.map((tag: string, index) => (
-                                <span
-                                    key={index}
-                                    className="inline-flex items-center gap-1 rounded-md bg-slate-100 text-slate-600 px-2 py-0.5 text-[11px] font-medium border border-slate-200 hover:bg-slate-200 transition"
-                                >
-                                    <span>🏷️{tag}</span>
-                                </span>
-                            ))}
-                            {subject.id && subjectToTags.get(subject.id)?.length === 0 && <p className='text-sm text-gray-400'>No documents added yet</p>}
-                        </div>
-                    </div>
+                        {/* Footer */}
+                        <div className="flex justify-between items-end gap-2 mt-4">
 
-                </Link>
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-2">
+                                {subject.id &&
+                                    subjectToTags.get(subject.id)?.map((tag: string, index) => (
+                                        <span
+                                            key={index}
+                                            className="rounded-md bg-slate-100 text-slate-600
+                             px-2 py-0.5 text-[11px] font-medium
+                             border border-slate-200
+                             hover:bg-indigo-50 hover:text-indigo-600 transition"
+                                        >
+                                            🏷️ {tag}
+                                        </span>
+                                    ))}
+
+                                {subject.id &&
+                                    subjectToTags.get(subject.id)?.length === 0 && (
+                                        <span className="text-xs text-slate-400">
+                                            No documents yet
+                                        </span>
+                                    )}
+                            </div>
+
+                            {/* Delete */}
+                            <button
+                                className="text-xs px-3 py-1 rounded-full
+                       bg-red-50 text-red-600
+                       hover:bg-red-100 transition"
+                            >
+                                Delete
+                            </button>
+                        </div>
+
+                    </div>
             ))}
         </div>
+
     )
 }
 
