@@ -1,6 +1,8 @@
 import { User } from "@/types";
 import axios from "../axios";
 import { createClient } from "../supabase/client";
+import { tryLoadManifestWithRetries } from "next/dist/server/load-components";
+import toast from "react-hot-toast";
 
 const supabase = createClient();
 
@@ -33,22 +35,11 @@ export const userExitsts = async (email: string) => {
     }
 }
 
-export const getCurrentUser = async (): Promise<User | null> => {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) throw authError;
-  if (!user) return null;
-
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (error) throw error;
-
-  return data;
+export const getCurrentUser = async () => {
+  try {
+    const res = await axios.get("/get-current-user");
+    return res;
+  } catch (error: any) {
+    toast.error(error.message);
+  }
 };

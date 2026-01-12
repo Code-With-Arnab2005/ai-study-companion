@@ -3,6 +3,10 @@ export type User = {
     fullname: string;
     email: string;
     course: string;
+    role: string;
+    is_active: boolean;
+    avatar_url: string;
+    created_at: string;
 }
 
 export type SignupError = {

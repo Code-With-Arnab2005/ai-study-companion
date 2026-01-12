@@ -1,84 +1,112 @@
 'use client';
 import Loader from '@/components/Loader';
-import { ProfileRow } from '@/components/auth/ProfileRow';
-import { createClient } from '@/lib/supabase/client';
+import UserDetailsCard from '@/components/auth/UserDetailsCard';
+import { getCurrentUser } from '@/lib/actions/auth-actions';
+import { User } from '@/types';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const supabase = createClient();
+  const getUser = async () => {
+    try {
+      const res = await getCurrentUser();
+      if (!res?.data) {
+        toast.error("Something went wrong");
+        return;
+      }
+      if (!res.data.success) {
+        toast.error(res.data.message);
+        return;
+      }
+      setUser(res.data.user);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-      setLoading(false);
-    };
     getUser();
   }, []);
 
-  if(loading) return <Loader />
+  if (loading) return <Loader />;
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-100 to-slate-200 py-12 px-4 mt-15">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-md border border-slate-200 p-8">
+    <main className="min-h-screen bg-linear-to-br from-slate-100 via-indigo-100 to-purple-100 py-14 px-4 mt-15">
+      <div className="max-w-3xl mx-auto space-y-8">
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
-            My Profile
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Your personal account information
-          </p>
-        </div>
+        {/* PROFILE HEADER CARD */}
+        <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-8 flex flex-col sm:flex-row gap-6 items-center">
 
-        {/* Profile Card */}
-        <div className="space-y-6">
+          {/* Avatar */}
+          <div className="w-24 h-24 rounded-full bg-indigo-600 flex items-center justify-center
+                          text-white text-3xl font-bold shadow">
+            {user?.email?.[0]?.toUpperCase()}
+          </div>
 
-          {/* Full Name */}
-          <ProfileRow
-            label="Full Name"
-            value={user?.user_metadata?.full_name || 'Not provided'}
-          />
+          {/* Identity */}
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl font-bold text-slate-900">
+              {user?.user_metadata?.full_name || 'Student'}
+            </h1>
+            <p className="text-sm text-slate-500">
+              {user?.email}
+            </p>
 
-          {/* Email */}
-          <ProfileRow
-            label="Email"
-            value={user?.email}
-            badge="Verified"
-          />
-
-          {/* Course */}
-          <ProfileRow
-            label="Course"
-            value={user?.user_metadata?.course || 'B.Tech'}
-          />
-
-          {/* Role */}
-          <ProfileRow
-            label="Role"
-            value="Student"
-            badgeColor="bg-indigo-100 text-indigo-700"
-          />
-
-          {/* Account Status */}
-          <ProfileRow
-            label="Account Status"
-            value={user?.email_confirmed_at ? 'Active' : 'Pending Verification'}
-            badgeColor={
-              user?.email_confirmed_at
-                ? 'bg-green-100 text-green-700'
-                : 'bg-yellow-100 text-yellow-700'
-            }
-          />
+            <div className="mt-2 inline-flex items-center rounded-full
+                            bg-green-100 text-green-700
+                            px-3 py-1 text-xs font-medium">
+              Active Account
+            </div>
+          </div>
 
         </div>
 
-        {/* Footer Action */}
-        <div className="mt-10 flex justify-end">
+        {/* DETAILS CARD */}
+        <UserDetailsCard user={user} />
+
+        {/* APP USAGE / STATS CARD */}
+        <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-8">
+
+          <h2 className="text-lg font-semibold text-slate-800 mb-6">
+            App Activity
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+
+            <div className="rounded-xl bg-slate-50 border p-5">
+              <p className="text-2xl font-bold text-indigo-600">—</p>
+              <p className="text-sm text-slate-500 mt-1">Subjects Created</p>
+            </div>
+
+            <div className="rounded-xl bg-slate-50 border p-5">
+              <p className="text-2xl font-bold text-indigo-600">—</p>
+              <p className="text-sm text-slate-500 mt-1">Documents Uploaded</p>
+            </div>
+
+            <div className="rounded-xl bg-slate-50 border p-5">
+              <p className="text-2xl font-bold text-indigo-600">—</p>
+              <p className="text-sm text-slate-500 mt-1">AI Sessions</p>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex justify-end gap-4">
+
+          <button
+            className="rounded-lg border border-slate-300 bg-white
+                       px-6 py-2.5 text-sm font-semibold text-slate-700
+                       hover:bg-slate-100 transition"
+          >
+            Change Password
+          </button>
+
           <button
             className="rounded-lg bg-indigo-600 px-6 py-2.5
                        text-sm font-semibold text-white shadow-sm
@@ -86,6 +114,7 @@ export default function ProfilePage() {
           >
             Edit Profile
           </button>
+
         </div>
 
       </div>
