@@ -45,13 +45,13 @@ export default function ProfilePage() {
           {/* Avatar */}
           <div className="w-24 h-24 rounded-full bg-indigo-600 flex items-center justify-center
                           text-white text-3xl font-bold shadow">
-            {user?.email?.[0]?.toUpperCase()}
+            {user?.avatar_url || ""}
           </div>
 
           {/* Identity */}
           <div className="text-center sm:text-left">
             <h1 className="text-2xl font-bold text-slate-900">
-              {user?.user_metadata?.full_name || 'Student'}
+              {user?.fullname || 'Student'}
             </h1>
             <p className="text-sm text-slate-500">
               {user?.email}
