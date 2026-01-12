@@ -48,7 +48,7 @@ const page = () => {
                 </div>
 
                 {/* Subjects Grid */}
-                <SubjectShowingGrid subjects={subjects} loading={loading}/>
+                <SubjectShowingGrid subjects={subjects} loading={loading} fetchSubjects={fetchSubjects}/>
 
                 {/* Modal */}
                 <AddSubjectModal

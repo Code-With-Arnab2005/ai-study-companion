@@ -1,9 +1,6 @@
 "use client";
-import { supabase } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
 
 export default function VerifyEmailPage() {
     const router = useRouter();

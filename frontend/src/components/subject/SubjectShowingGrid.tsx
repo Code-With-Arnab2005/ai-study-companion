@@ -1,15 +1,18 @@
 "use client";
 import { useEffect, useState } from 'react'
 import { Subject } from '@/types';
-import { getTagsBySubjectId } from '@/lib/actions/subject-actions';
+import { deleteSubject, getTagsBySubjectId } from '@/lib/actions/subject-actions';
 import Loader from '../Loader';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { ArrowBigRight } from 'lucide-react';
+import { Spinner } from '../ui/spinner';
 
-const SubjectShowingGrid = ({ subjects, loading }: { subjects: Subject[], loading: boolean }) => {
+const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Subject[], loading: boolean, fetchSubjects: Function }) => {
 
     const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
+    const [deleteLoading, setDeleteLoading] = useState<Map<string, boolean>>(new Map()); //subject-id -> deleteLoading
+    // const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
     const setSubjectTagsBySubjectId = async () => {
         if (!subjects) {
@@ -43,6 +46,40 @@ const SubjectShowingGrid = ({ subjects, loading }: { subjects: Subject[], loadin
         setSubjectToTags(newMap);
     }
 
+    const handleDelete = async (subject: Subject) => {
+        const subject_id = subject.id;
+        if(!subject_id){
+            toast.error("Subject id not found");
+            return;
+        }
+        setDeleteLoading(prev => {
+            const newMap = new Map(prev);
+            newMap.set(subject_id, true);
+            return newMap;
+        })
+        try {
+            const res = await deleteSubject(subject_id);
+            if(!res?.data){
+                toast.error("Something went wrong");
+                return;
+            }
+            if(!res.data.success){
+                toast.error(res.data.message);
+                return;
+            }
+            fetchSubjects();
+            toast.success(`Subject ${subject.subject_name} deleted successfully`);
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setDeleteLoading(prev => {
+                const newMap = new Map(prev);
+                newMap.set(subject_id, false);
+                return newMap;
+            });
+        }
+    }
+
     useEffect(() => {
         if (subjects.length === 0) return;
         setSubjectTagsBySubjectId();
@@ -62,83 +99,81 @@ const SubjectShowingGrid = ({ subjects, loading }: { subjects: Subject[], loadin
             )}
 
             {subjects?.length > 0 && subjects.map((subject: Subject) => (
-                    <div
-                        key={subject.id}
-                        className="group bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-indigo-300 h-[26vh] flex flex-col justify-between"
-                    >
+                <div
+                    key={subject.id}
+                    className="group bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-indigo-300 h-[26vh] flex flex-col justify-between"
+                >
 
-                        {/* Header */}
-                        <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-2">
-                                <h3 className="text-lg font-semibold text-slate-800 group-hover:text-indigo-600 transition">
-                                    {subject.subject_name}
-                                </h3>
-                                <ArrowBigRight
-                                    className="text-slate-400 group-hover:text-indigo-500 transition"
-                                    size={18}
-                                />
-                            </div>
-                            <Link href={`/subjects/${subject.id}`} >
-                                <button
-                                    className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
-                                >
-                                    View
-                                </button>
-                            </Link>
+                    {/* Header */}
+                    <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-lg font-semibold text-slate-800 group-hover:text-indigo-600 transition">
+                                {subject.subject_name}
+                            </h3>
+                            <ArrowBigRight
+                                className="text-slate-400 group-hover:text-indigo-500 transition"
+                                size={18}
+                            />
                         </div>
-
-                        {/* Meta Info */}
-                        <div className="mt-3 space-y-1 text-sm text-slate-500">
-                            <p>📄 {subject.no_of_documents ?? 0} Documents</p>
-                            <p>
-                                📅{" "}
-                                {subject.created_at
-                                    ? new Date(subject.created_at).toLocaleDateString("en-IN", {
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                    })
-                                    : "—"}
-                            </p>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="flex justify-between items-end gap-2 mt-4">
-
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-2">
-                                {subject.id &&
-                                    subjectToTags.get(subject.id)?.map((tag: string, index) => (
-                                        <span
-                                            key={index}
-                                            className="rounded-md bg-slate-100 text-slate-600
-                             px-2 py-0.5 text-[11px] font-medium
-                             border border-slate-200
-                             hover:bg-indigo-50 hover:text-indigo-600 transition"
-                                        >
-                                            🏷️ {tag}
-                                        </span>
-                                    ))}
-
-                                {subject.id &&
-                                    subjectToTags.get(subject.id)?.length === 0 && (
-                                        <span className="text-xs text-slate-400">
-                                            No documents yet
-                                        </span>
-                                    )}
-                            </div>
-
-                            {/* Delete */}
+                        <Link href={`/subjects/${subject.id}`} >
                             <button
-                                className="text-xs px-3 py-1 rounded-full
-                       bg-red-50 text-red-600
-                       hover:bg-red-100 transition"
+                                className="hover:cursor-pointer text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
+                            >
+                                View
+                            </button>
+                        </Link>
+                    </div>
+
+                    {/* Meta Info */}
+                    <div className="mt-3 space-y-1 text-sm text-slate-500">
+                        <p>📄 {subject.no_of_documents ?? 0} Documents</p>
+                        <p>
+                            📅{" "}
+                            {subject.created_at
+                                ? new Date(subject.created_at).toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                })
+                                : "—"}
+                        </p>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex justify-between items-end gap-2 mt-4">
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2">
+                            {subject.id &&
+                                subjectToTags.get(subject.id)?.map((tag: string, index) => (
+                                    <span
+                                        key={index}
+                                        className="rounded-md bg-slate-100 text-slate-600 px-2 py-0.5 text-[11px] font-medium border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition"
+                                    >
+                                        🏷️ {tag}
+                                    </span>
+                                ))}
+
+                            {subject.id &&
+                                subjectToTags.get(subject.id)?.length === 0 && (
+                                    <span className="text-xs text-slate-400">
+                                        No documents yet
+                                    </span>
+                                )}
+                        </div>
+
+                        {/* Delete */}
+                        {deleteLoading.get(subject.id!) ? <Spinner /> : (
+                            <button
+                                onClick={() => handleDelete(subject!)}
+                                className="hover:cursor-pointer text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
                             >
                                 Delete
                             </button>
-                        </div>
-
+                        )}
                     </div>
+
+                </div>
             ))}
         </div>
 
