@@ -62,14 +62,14 @@ export default function LoginPage() {
                 toast.error(error.message);
                 return;
             }
-
+            
             // store into users table
             const id = data.user?.id;
             if (!id) {
                 toast.error("Failed to get user ID");
                 return;
             }
-
+            
             const res = await createUser({ id, fullname, email, course });
             if(!res?.data){
                 toast.error("Something went wrong, please try again later");
