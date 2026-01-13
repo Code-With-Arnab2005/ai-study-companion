@@ -14,9 +14,11 @@ app.get("/", (req, res) => {
 //routes
 import authRouter from "./routes/auth.route.js";
 import subjectRouter from "./routes/subject.route.js";
+import agentRouter from "./routes/agents.route.js";
 
 app.use("/api", authRouter);
 app.use("/api", subjectRouter);
+app.use("/api", agentRouter);
 
 //port configuration
 const PORT = process.env.PORT || 5000;
