@@ -28,7 +28,6 @@ const RecentSubjects = () => {
         } finally {
             setIsLoading(false);
         }
-        console.log(recentSubjects)
     }
 
     useEffect(() => {

@@ -64,7 +64,7 @@ const StatusCard = () => {
             <StatCard title="Total Subjects" value={totalNoOfSubjects} isLoading={isTotalSubjectLoading} />
             <StatCard title="Total Documents" value={totalNoOfDocs} isLoading={isTotalDocsLoading} />
             <StatCard title="PDF Notes" value={noOfPdfDocs} isLoading={isTotalPdfLoading} />
-            <StatCard title="AI Sessions" value="12" isLoading={false}/>
+            <StatCard title="AI Sessions" value="0" isLoading={false}/>
         </div>
     )
 }
