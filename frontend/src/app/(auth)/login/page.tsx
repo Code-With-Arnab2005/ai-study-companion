@@ -31,7 +31,10 @@ export default function LoginPage() {
 
         setErrors(newErrors);
 
-        if (Object.values(newErrors).length > 0) return;
+        if (Object.keys(newErrors).length > 0){
+            setLoading(false);
+            return;
+        }
         
         //login with supabase
         try {
@@ -91,8 +94,8 @@ export default function LoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-black"
                         />
-                        {errors.email && (
-                            <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                        {errors.password && (
+                            <p className="text-sm text-red-600 mt-1">{errors.password}</p>
                         )}
                     </div>
 
