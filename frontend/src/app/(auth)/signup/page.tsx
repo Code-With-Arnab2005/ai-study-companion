@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "@/lib/axios";
 import { createClient } from "@/lib/supabase/client";
 import { createUser, userExitsts } from "@/lib/actions/auth-actions";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginPage() {
     const [fullname, setFullname] = useState("");
@@ -17,10 +18,13 @@ export default function LoginPage() {
 
     const [errors, setErrors] = useState<SignupError>({});
 
+    const [loading, setLoading] = useState(false);
+
     const router = useRouter();
     const supabase = createClient();
 
     const handleSubmit = async (e: any) => {
+        setLoading(true);
         e.preventDefault();
         const newErrors: SignupError = {};
 
@@ -83,6 +87,8 @@ export default function LoginPage() {
             router.push("/verify-email");
         } catch (error: any) {
             toast.error(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -192,12 +198,14 @@ export default function LoginPage() {
                     </div>
 
                     {/* Button */}
-                    <button
-                        type="submit"
-                        className="w-full mt-2 py-2.5 rounded-lg bg-indigo-700 text-white font-semibold hover:bg-indigo-800 transition"
-                    >
-                        Sign Up
-                    </button>
+                    {loading ? <Spinner /> : (
+                        <button
+                            type="submit"
+                            className="w-full mt-2 py-2.5 rounded-lg bg-indigo-700 text-white font-semibold hover:bg-indigo-800 transition"
+                        >
+                            Sign Up
+                        </button>
+                    )}
                 </form>
 
                 {/* Footer */}

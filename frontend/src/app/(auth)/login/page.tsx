@@ -1,4 +1,5 @@
 "use client";
+import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { LoginError } from "@/types";
 import Link from "next/link";
@@ -11,10 +12,13 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<LoginError>({});
 
+    const [loading, setLoading] = useState(false);
+
     const router = useRouter();
     const supabase = createClient();
 
     const handleSubmit = async (e: any) => {
+        setLoading(true);
         e.preventDefault();
         const newErrors: LoginError = {};
 
@@ -40,6 +44,8 @@ export default function LoginPage() {
             router.push("/dashboard");
         } catch (error: any) {
             toast.error(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -91,12 +97,14 @@ export default function LoginPage() {
                     </div>
 
                     {/* Button */}
-                    <button
-                        type="submit"
-                        className="w-full py-2.5 rounded-lg bg-indigo-700 text-white font-semibold hover:bg-indigo-800 transition"
-                    >
-                        Login
-                    </button>
+                    {loading ? <Spinner /> : (
+                        <button
+                            type="submit"
+                            className="w-full py-2.5 rounded-lg bg-indigo-700 text-white font-semibold hover:bg-indigo-800 transition"
+                        >
+                            Login
+                        </button>
+                    )}
                 </form>
 
                 {/* Footer */}
