@@ -45,7 +45,10 @@ export default function LoginPage() {
 
         setErrors(newErrors);
 
-        if (Object.keys(newErrors).length > 0) return;
+        if (Object.keys(newErrors).length > 0){
+            setLoading(false);
+            return;
+        }
 
         //signup with supabase
         try {
