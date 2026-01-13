@@ -70,14 +70,19 @@ export default function LoginPage() {
                 return;
             }
 
-            const res = await createUser({ id, fullname, email, course});
-            console.log(res);
-            
+            const res = await createUser({ id, fullname, email, course });
+            if(!res?.data){
+                toast.error("Something went wrong, please try again later");
+                return;
+            }
+            if(!res.data.success){
+                toast.error(res.data.message);
+                return;
+            }
             toast.success("Signed up successfully, Please verify your email");
             router.push("/verify-email");
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong, please try again later");
+        } catch (error: any) {
+            toast.error(error.message);
         }
     }
 

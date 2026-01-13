@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 const supabase = createClient();
 
-export const createUser = async (data: User) => {
+export const createUser = async (data: any) => {
     try {
         const { id, fullname, email, course } = data;
 

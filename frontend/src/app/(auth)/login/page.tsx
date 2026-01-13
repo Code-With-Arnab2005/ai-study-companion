@@ -38,9 +38,8 @@ export default function LoginPage() {
             }
             toast.success("Login successfully");
             router.push("/dashboard");
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong, please try again later");
+        } catch (error: any) {
+            toast.error(error.message);
         }
     }
 
