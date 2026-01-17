@@ -1,6 +1,8 @@
 "use client";
+import PageWrapper from '@/components/PageWrapper';
 import AddSubjectButton from '@/components/subject/AddSubjectButton';
 import AddSubjectModal from '@/components/subject/AddSubjectModal';
+import SubjectHeader from '@/components/subject/SubjectHeader';
 import SubjectShowingGrid from '@/components/subject/SubjectShowingGrid';
 import { fetchAllSubjects } from '@/lib/actions/subject-actions';
 import { Subject } from '@/types';
@@ -34,33 +36,28 @@ const page = () => {
     useEffect(() => {
         fetchSubjects();
     }, [])
-    
+
     return (
-        <main className="min-h-screen bg-linear-to-br from-slate-100 via-indigo-100 to-purple-100 mt-15">
-            {/* Content */}
-            <section className="max-w-6xl mx-auto px-6 py-10">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                        Your Subjects
-                    </h2>
+        <PageWrapper>
+            <div className="flex justify-between items-center mb-6">
+                <SubjectHeader />
 
-                    <AddSubjectButton onClick={() => setIsModalOpen(true)} />
-                </div>
+                <AddSubjectButton onClick={() => setIsModalOpen(true)} />
+            </div>
 
-                {/* Subjects Grid */}
-                <SubjectShowingGrid subjects={subjects} loading={loading} fetchSubjects={fetchSubjects}/>
+            {/* Subjects Grid */}
+            <SubjectShowingGrid subjects={subjects} loading={loading} fetchSubjects={fetchSubjects} />
 
-                {/* Modal */}
-                <AddSubjectModal
-                    fetchSubjects={fetchSubjects}
-                    setSubjectName={setSubjectName}
-                    subjectName={subjectName}
-                    isOpen={isModalOpen}
-                    setIsModalOpen={setIsModalOpen}
-                    onClose={() => handleModalClose()}
-                />
-            </section>
-        </main>
+            {/* Modal */}
+            <AddSubjectModal
+                fetchSubjects={fetchSubjects}
+                setSubjectName={setSubjectName}
+                subjectName={subjectName}
+                isOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                onClose={() => handleModalClose()}
+            />
+        </PageWrapper>
     )
 }
 

@@ -49,10 +49,10 @@ const Navbar = () => {
                         Progress
                     </a>
                     <a
-                        href="#"
+                        href="/ai-sessions"
                         className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition"
                     >
-                        Resources
+                        AI Session
                     </a>
                 </nav>
 
