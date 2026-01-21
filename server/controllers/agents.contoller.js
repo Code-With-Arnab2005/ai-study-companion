@@ -98,7 +98,7 @@ const getAllGeneratedNotes = async (req, res) => {
             return res.status(500).json({ success: false, message: error.message })
         }
 
-        return res.status(200).json({ success: true, message: "All notes fetched successfully", note: data })
+        return res.status(200).json({ success: true, message: "All notes fetched successfully", notes: data })
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: error.message });

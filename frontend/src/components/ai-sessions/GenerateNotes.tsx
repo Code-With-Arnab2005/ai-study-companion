@@ -1,11 +1,13 @@
 "use client";
 import { useState } from 'react'
 import GeneratingNotesLoader from './GeneratingNotesLoader';
-import { generateNotes, getLatestNote } from '@/lib/actions/ai-session-actions';
+import { fetchAllNotes, generateNotes, getLatestNote } from '@/lib/actions/ai-session-actions';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import SectionLoader from '../SectionLoader';
+import Sidebar from './Sidebar';
+import { GeneratedNotes } from '@/types';
 
 const GenerateNotes = () => {
     const [topicName, setTopicName] = useState("");
@@ -14,6 +16,8 @@ const GenerateNotes = () => {
     const [generatedNotes, setGeneratedNotes] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const [isFetchingLatestNote, setIsFetchingLatestNote] = useState(false);
+    const [notes, setNotes] = useState<GeneratedNotes[]>([]);
+    const [isFetchingNotes, setIsFetchingNotes] = useState<boolean>(false);
 
     const handleGenerateNotes = async () => {
         setIsGenerating(true);
@@ -31,6 +35,7 @@ const GenerateNotes = () => {
             } else {
                 toast.success("Notes generated successfully");
                 setGeneratedNotes(res.data.notes);
+                fetchNotes();
             }
         } catch (error: any) {
             const errorMessage = error.response.data.message
@@ -40,7 +45,6 @@ const GenerateNotes = () => {
             setIsGenerating(false);
         }
     }
-
     const getLastNote = async () => {
         setIsFetchingLatestNote(true);
         try {
@@ -65,17 +69,50 @@ const GenerateNotes = () => {
             setIsFetchingLatestNote(false);
         }
     }
+    const fetchNotes = async () => {
+        setIsFetchingNotes(true);
+        try {
+            const res = await fetchAllNotes();
+            if (!res.data) {
+                toast.error("Something went wrong");
+            } else if (!res.data.success) {
+                toast.error(res.data.success);
+            } else {
+                setNotes(res.data.notes);
+            }
+        } catch (error: any) {
+            const errorMessage = error.response.data.message
+                || "Something went wrong"
+            toast.error(errorMessage);
+        } finally {
+            setIsFetchingNotes(false);
+        }
+    }
 
     return (
         <>
-            <div>
+            <div className='fixed top-25 right-35 flex items-center gap-3'>
                 <button
                     disabled={isFetchingLatestNote}
                     onClick={getLastNote}
-                    className={`hover:cursor-pointer fixed top-25 right-35 min-w-[15vw] bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4 py-2.5 text-white font-semibold  transition`}
+                    className={`hover:cursor-pointer min-w-[10vw] bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4 py-2.5 text-white font-semibold  transition`}
                 >
                     {isFetchingLatestNote ? <SectionLoader /> : "Get Last Note"}
                 </button>
+                {/* <button
+                    className={`hover:cursor-pointer min-w-[10vw] bg-green-600 hover:bg-green-700 rounded-lg px-4 py-2.5 text-white font-semibold  transition`}
+                >
+                    See All Generated Notes
+                </button> */}
+                <Sidebar
+                    fetchNotes={fetchNotes}
+                    notes={notes}
+                    isFetchingNotes={isFetchingNotes}
+                    setTopicName={setTopicName}
+                    setDepth={setDepth}
+                    setLevel={setLevel}
+                    setGeneratedNotes={setGeneratedNotes}
+                />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left: Input Form */}

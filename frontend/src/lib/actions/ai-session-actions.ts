@@ -15,3 +15,8 @@ export const getLatestNote = async () => {
     const res = await axios.get("/get-latest-generated-notes");
     return res;
 }
+
+export const fetchAllNotes = async () => {
+    const res = await axios.get("/get-all-generated-notes");
+    return res;
+}

@@ -39,3 +39,16 @@ export type Document = {
     user_id: string | null,
     created_at: string | null
 }
+
+export type NotesDepth = "Short" | "Medium" | "Deep";
+export type NotesLevel = "Beginner" | "Intermediate" | "Advanced";
+
+export type GeneratedNotes = {
+    id: string | null,
+    user_id: string | null,
+    topic: string | null,
+    depth: NotesDepth | null,
+    level: NotesLevel | null,
+    notes: string | null,
+    created_at: string | null
+}
