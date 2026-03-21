@@ -1,4 +1,5 @@
 "use client";
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { LoginError } from "@/types";
@@ -109,6 +110,9 @@ export default function LoginPage() {
                         </button>
                     )}
                 </form>
+
+                {/* Google OAuth Button */}
+                <GoogleLoginButton />
 
                 {/* Footer */}
                 <div className="mt-6 text-center text-sm text-gray-600">
