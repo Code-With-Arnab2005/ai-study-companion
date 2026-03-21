@@ -5,30 +5,22 @@ import toast from "react-hot-toast";
 const supabase = createClient();
 
 export const createUser = async (data: any) => {
-    try {
-        const { id, fullname, email, course } = data;
-        const res = await axios.post("/user-signup", {
-            id,
-            fullname,
-            email,
-            course
-        })
+    const { id, fullname, email, course } = data;
+    const res = await axios.post("/user-signup", {
+        id,
+        fullname,
+        email,
+        course
+    })
 
-        return res;
-    } catch (error: any) {
-        console.log(error.message);
-    }
+    return res;
 }
 
 export const userExitsts = async (email: string) => {
-    try {
-        const { data: existingUser, error} = await supabase.from('users').select('id').eq('email', email).maybeSingle();
-        if(existingUser) return true;
-        if(error) throw error;
-        return false;
-    } catch (error) {
-        
-    }
+    const res = await axios.post("/user-exists-by-email", {
+        email
+    })
+    return res;
 }
 
 export const getCurrentUser = async () => {
