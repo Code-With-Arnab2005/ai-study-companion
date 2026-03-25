@@ -21,6 +21,15 @@ export type LoginError = {
     password?: string,
 }
 
+export type forgotPasswordError = {
+    email?: string,
+}
+
+export type updatePasswordError = {
+    password?: string,
+    confirmPassword?: string,
+}
+
 export type Subject = {
     id: string | null,
     subject_name: string | null,

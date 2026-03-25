@@ -8,12 +8,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
 
-    const publicRoutes = ["/login", "/signup", "/verify-email", "/"];
+    const authRoutes = ["/login", "/signup", "/verify-email", "/forgot-password"];
+    const publicRoutes = ["/update-password", "/"];
     const isPublicRoute = publicRoutes.some(route => pathname === route);
+    const isAuthRoute = authRoutes.some(route => pathname === route);
 
     useEffect(() => {
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-            if(isPublicRoute && session?.user){
+            if(isAuthRoute && session?.user){
                 router.push("/dashboard");
             } else if(!isPublicRoute && !session?.user){
                 router.push("/login");

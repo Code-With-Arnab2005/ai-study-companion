@@ -5,22 +5,22 @@ import toast from "react-hot-toast";
 const supabase = createClient();
 
 export const createUser = async (data: any) => {
-    const { id, fullname, email, course } = data;
-    const res = await axios.post("/user-signup", {
-        id,
-        fullname,
-        email,
-        course
-    })
+  const { id, fullname, email, course } = data;
+  const res = await axios.post("/user-signup", {
+    id,
+    fullname,
+    email,
+    course
+  })
 
-    return res;
+  return res;
 }
 
 export const userExitsts = async (email: string) => {
-    const res = await axios.post("/user-exists-by-email", {
-        email
-    })
-    return res;
+  const res = await axios.post("/user-exists-by-email", {
+    email
+  })
+  return res;
 }
 
 export const getCurrentUser = async () => {
@@ -31,3 +31,10 @@ export const getCurrentUser = async () => {
     toast.error(error.message);
   }
 };
+
+export const sendMail = async (email: string) => {
+  const res = await axios.post("/forgot-password", {
+    email
+  })
+  return res;
+}

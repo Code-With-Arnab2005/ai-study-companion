@@ -1,51 +1,81 @@
 "use client";
-import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
-import { LoginError } from "@/types";
-import Link from "next/link";
+import { updatePasswordError } from "@/types";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-export default function LoginPage() {
-    const [email, setEmail] = useState("");
+export default function updatePasswordPage() {
     const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState<LoginError>({});
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errors, setErrors] = useState<updatePasswordError>({});
 
     const [loading, setLoading] = useState(false);
 
     const router = useRouter();
     const supabase = createClient();
 
+    useEffect(() => {
+        const handleAuth = async () => {
+            // const { data: authencated }= await supabase.auth.getSession();
+            // if(authencated.session) return;
+
+            const hash = window.location.hash;
+
+            if (!hash) return;
+
+            const params = new URLSearchParams(hash.substring(1));
+
+            const access_token = params.get("access_token");
+            const refresh_token = params.get("refresh_token");
+
+            if (access_token && refresh_token) {
+                await supabase.auth.setSession({
+                    access_token,
+                    refresh_token,
+                });
+            }
+        };
+
+        handleAuth();
+    }, []);
+
     const handleSubmit = async (e: any) => {
         setLoading(true);
         e.preventDefault();
-        const newErrors: LoginError = {};
+        const newErrors: updatePasswordError = {};
 
-        if (!email.trim()) {
-            newErrors.email = "Email is required";
+        if (!password.trim()) {
+            newErrors.password = "Email is required";
         }
-        if (!password.trim() || password.length < 6) {
-            newErrors.password = "Password should be min 6 characters long";
+
+        if(!confirmPassword.trim()){
+            newErrors.confirmPassword = "Please confirm your password";
+        }
+
+        if(confirmPassword !== password){
+            toast.error("Passwords did not match");
         }
 
         setErrors(newErrors);
 
-        if (Object.keys(newErrors).length > 0){
+        if (Object.keys(newErrors).length > 0) {
             setLoading(false);
             return;
         }
-        
-        //login with supabase
+
+        // update password
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({email, password});
-            if(error){
+            const { data, error } = await supabase.auth.updateUser({
+                password: password
+            })
+            if (error) {
                 toast.error(error.message);
-                return;
+            } else {
+                toast.success("Password updated successfully");
+                router.push("/dashboard");
             }
-            toast.success("Login successfully");
-            router.push("/dashboard");
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -58,31 +88,14 @@ export default function LoginPage() {
             <div className="w-full max-w-md bg-white border border-gray-300 rounded-xl shadow p-8">
                 {/* Title */}
                 <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-                    Welcome Back
+                    Update Password
                 </h1>
                 <p className="text-gray-600 text-center mb-8">
-                    Login to continue your study workspace
+                    update your password
                 </p>
 
                 {/* Form */}
                 <form className="space-y-5" onSubmit={(e) => handleSubmit(e)}>
-                    {/* Email */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-black"
-                        />
-                        {errors.email && (
-                            <p className="text-sm text-red-600 mt-1">{errors.email}</p>
-                        )}
-                    </div>
-
                     {/* Password */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -100,39 +113,33 @@ export default function LoginPage() {
                         )}
                     </div>
 
+                    {/* Confirm Password */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Confirm Password
+                        </label>
+                        <input
+                            type="password"
+                            placeholder="••••••••"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-black"
+                        />
+                        {errors.password && (
+                            <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
+                        )}
+                    </div>
+
                     {/* Button */}
                     {loading ? <Spinner /> : (
                         <button
                             type="submit"
                             className="w-full py-2.5 rounded-lg bg-indigo-700 text-white font-semibold hover:bg-indigo-800 transition"
                         >
-                            Login
+                            Update Password
                         </button>
                     )}
                 </form>
-
-                {/* Google OAuth Button */}
-                <GoogleLoginButton />
-
-                {/* Footer */}
-                <div className="flex flex-col justify-center items-center gap-2 mt-6 text-center text-sm text-gray-600">
-                    <Link
-                        href={"/forgot-password"}
-                        className="text-indigo-700 font-medium hover:underline"
-                    >
-                        Forgot Password
-                    </Link>
-
-                    <div>
-                        Don’t have an account?{" "}
-                        <Link
-                            href="/signup"
-                            className="text-indigo-700 font-medium hover:underline"
-                        >
-                            Sign up
-                        </Link>
-                    </div>
-                </div>
             </div>
         </main>
     );

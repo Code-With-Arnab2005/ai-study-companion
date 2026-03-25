@@ -1,14 +1,18 @@
 'use client';
 import Loader from '@/components/Loader';
 import UserDetailsCard from '@/components/auth/UserDetailsCard';
+import { Button } from '@/components/ui/button';
 import { getCurrentUser } from '@/lib/actions/auth-actions';
 import { User } from '@/types';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
 
   const getUser = async () => {
     try {
@@ -98,14 +102,12 @@ export default function ProfilePage() {
 
         {/* ACTIONS */}
         <div className="flex justify-end gap-4">
-
-          <button
-            className="rounded-lg border border-slate-300 bg-white
-                       px-6 py-2.5 text-sm font-semibold text-slate-700
-                       hover:bg-slate-100 transition"
+          <Button
+            onClick={() => router.push("/update-password")}
+            className='hover:cursor-pointer from-destructive via-destructive/60 to-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 bg-transparent bg-gradient-to-r [background-size:200%_auto] text-white hover:bg-transparent hover:bg-[99%_center]'
           >
             Change Password
-          </button>
+          </Button>
 
           <button
             className="rounded-lg bg-indigo-600 px-6 py-2.5

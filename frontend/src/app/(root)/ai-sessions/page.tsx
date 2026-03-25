@@ -47,9 +47,6 @@ const page = () => {
                 
             </section>
         </PageWrapper>
-
-
-
     )
 }
 
