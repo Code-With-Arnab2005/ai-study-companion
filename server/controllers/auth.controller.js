@@ -14,8 +14,8 @@ const signup = async (req, res) => {
             .select('id')
             .eq('id', id)
             .maybeSingle()
-        
-        if(exisistingUserById){
+
+        if (exisistingUserById) {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
 
@@ -25,8 +25,8 @@ const signup = async (req, res) => {
             .select('id')
             .eq('id', id)
             .maybeSingle()
-        
-        if(exisistingUserByEmail){
+
+        if (exisistingUserByEmail) {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
 
@@ -61,12 +61,12 @@ const getCurrentUser = async (req, res) => {
         }
 
         const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
 
-        if(error){
+        if (error) {
             return res.status(500).json({ success: false, message: error.message });
         }
         return res.status(200).json({ success: true, message: "User fetched successfully", user: data });
@@ -79,17 +79,17 @@ const getCurrentUser = async (req, res) => {
 const userExistsByEmail = async (req, res) => {
     try {
         const { email } = req.body;
-        if(!email){
+        if (!email) {
             return res.status(400).json({ success: false, message: "Email is required" });
         }
 
         const { data, error } = await supabase
-        .from('users')
-        .select('email')
-        .eq('email', email)
-        .maybeSingle()
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle()
 
-        if(error){
+        if (error) {
             return res.status(500).json({ success: false, message: error.message });
         }
 
@@ -100,9 +100,35 @@ const userExistsByEmail = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log(email)
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email is required" });
+        }
+
+        const baseUrl = process.env.FRONTEND_BASE_URL;
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${baseUrl}/update-password`
+        })
+
+        if (error) {
+            console.log(error)
+            return res.status(500).json({ success: false, message: error });
+        }
+
+        return res.status(200).json({ success: true, message: "Reset Email send successfully " });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     signup,
     getCurrentUser,
     userExistsByEmail,
-    
+    forgotPassword,
+
 }
