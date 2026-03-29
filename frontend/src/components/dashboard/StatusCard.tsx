@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import StatCard from "@/components/subject/StatCard";
 import { fetchNumberOfPDFdocs, fetchTotalNumberOfDocuments, fetchTotalNumberOfSubjects } from '@/lib/actions/subject-actions';
 import toast from 'react-hot-toast';
+import { fetcher } from '@/lib/swr/helper';
+import useSWR from 'swr';
 
 const StatusCard = () => {
     const [totalNoOfSubjects, setTotalNoOfSubjects] = useState<string>("");
@@ -53,6 +55,8 @@ const StatusCard = () => {
         setIsTotalPdfLoading(false);
     }
 
+    const { data: generatedNotes, error: notesError, isLoading: notesLoading } = useSWR("/get-all-generated-notes", fetcher);
+
     useEffect(() => {
         getTotalDocuments();
         getTotalSubjects();
@@ -64,7 +68,7 @@ const StatusCard = () => {
             <StatCard title="Total Subjects" value={totalNoOfSubjects} isLoading={isTotalSubjectLoading} />
             <StatCard title="Total Documents" value={totalNoOfDocs} isLoading={isTotalDocsLoading} />
             <StatCard title="PDF Notes" value={noOfPdfDocs} isLoading={isTotalPdfLoading} />
-            <StatCard title="AI Sessions" value="0" isLoading={false}/>
+            <StatCard title="AI Sessions" value={generatedNotes?.note?.length} isLoading={notesLoading}/>
         </div>
     )
 }
