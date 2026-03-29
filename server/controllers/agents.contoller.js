@@ -15,15 +15,15 @@ const makeNotes = async (req, res) => {
         }
 
         const { data } = await supabase
-        .from('generated_notes')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('topic', topic)
-        .eq('depth', depth)
-        .eq('level', level)
-        .maybeSingle();
+            .from('generated_notes')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('topic', topic)
+            .eq('depth', depth)
+            .eq('level', level)
+            .maybeSingle();
 
-        if(data){
+        if (data) {
             return res.status(400).json({ success: false, message: "Notes already exists with the same attributes" });
         }
 
@@ -34,18 +34,18 @@ const makeNotes = async (req, res) => {
 
         //store the notes into supabase table
         const { error } = await supabase
-        .from('generated_notes')
-        .insert([
-            {
-                user_id: user.id,
-                topic,
-                depth,
-                level,
-                notes
-            }
-        ])
+            .from('generated_notes')
+            .insert([
+                {
+                    user_id: user.id,
+                    topic,
+                    depth,
+                    level,
+                    notes
+                }
+            ])
 
-        if(error){
+        if (error) {
             return res.status(500).json({ success: false, message: error.message });
         }
 
@@ -64,14 +64,14 @@ const getLatestGeneratdNotes = async (req, res) => {
         }
 
         const { data, error } = await supabase
-        .from('generated_notes')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
+            .from('generated_notes')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .eq('user_id', user.id)
+            .limit(1)
+            .single()
 
-        if(error){
+        if (error) {
             return res.status(500).json({ success: false, message: error.message })
         }
 
@@ -90,11 +90,11 @@ const getAllGeneratedNotes = async (req, res) => {
         }
 
         const { data, error } = await supabase
-        .from('generated_notes')
-        .select('*')
-        .eq('user_id', user.id)
+            .from('generated_notes')
+            .select('*')
+            .eq('user_id', user.id)
 
-        if(error){
+        if (error) {
             return res.status(500).json({ success: false, message: error.message })
         }
 

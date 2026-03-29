@@ -1,6 +1,14 @@
 import { getUserFromToken } from "../lib/getUserFromToken.js";
 import { supabase } from "../lib/supabase/supabaseClient.js";
 
+const getDocType = (docType) => {
+    if(docType.includes("image") || docType.includes("png") || docType.includes("jpeg")) return "IMAGE";
+    if(docType.includes("pdf")) return "PDF";
+    if(docType.includes("document")) return "DOCUMENT";
+    return "OTHER";
+}
+
+
 const insertSubject = async (req, res) => {
     try {
         const user = await getUserFromToken(req);
@@ -404,6 +412,63 @@ const getRecentCreatedDocuments = async (req, res) => {
     }
 }
 
+/* TODO */
+const getNoOfSubjectsForLastSevenDays = async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) {
+        return res.status(500).json({ success: false, message: "User is unauthorized" });
+    }
+
+    const today = new Date();
+    const last7Days = new Date();
+    last7Days.setDate(today.getDate() - 6); // including today
+
+    const { data, error } = await supabase
+        .from('subjects')
+        .select('*')
+        .gte("created")
+
+}
+
+/* TODO */
+const getAllDocsFilteredByTypes = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { data, error } = await supabase
+            .from('documents')
+            .select('*')
+            .eq('user_id', user.id);
+        
+        if(error){
+            return res.status(500).json({ success: false, message: error.message });
+        }
+
+        // make category wise documents
+        const map = new Map();
+        {data.map((doc) => {
+            const doc_type = getDocType(doc.doc_type);
+
+            if(!map.has(doc_type)){
+                map.set(doc_type, []);
+            }
+
+            map.get(doc_type).push(doc);
+        })}
+
+        // convert to JSON response
+        const response = Object.fromEntries(map);
+
+        return res.status(200).json({ success: true, message: "Documents fetched successfully and filtered", data: response });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     insertSubject,
     deleteSubject,
@@ -417,5 +482,6 @@ export {
     getNumberOfSubjects,
     getNumberOfPdfNotes,
     getRecentCreatedSubjects,
-    getRecentCreatedDocuments
+    getRecentCreatedDocuments,
+    getAllDocsFilteredByTypes
 }

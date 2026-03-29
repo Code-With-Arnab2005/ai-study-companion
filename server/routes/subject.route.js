@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDocument, deleteDocument, deleteSubject, fetchDocumentsBySubjectId, getAllSubjects, getNumberOfDocuments, getNumberOfPdfNotes, getNumberOfSubjects, getRecentCreatedDocuments, getRecentCreatedSubjects, getSubjectById, getTagsBySubjectId, insertSubject } from '../controllers/subject.controller.js';
+import { addDocument, deleteDocument, deleteSubject, fetchDocumentsBySubjectId, getAllDocsFilteredByTypes, getAllSubjects, getNumberOfDocuments, getNumberOfPdfNotes, getNumberOfSubjects, getRecentCreatedDocuments, getRecentCreatedSubjects, getSubjectById, getTagsBySubjectId, insertSubject } from '../controllers/subject.controller.js';
 
 const router = express.Router();
 
@@ -16,5 +16,6 @@ router.get("/get-count-of-subjects", getNumberOfSubjects);
 router.get("/get-count-of-pdf-docs", getNumberOfPdfNotes);
 router.get("/get-recent-subjects", getRecentCreatedSubjects);
 router.get("/get-recent-documents", getRecentCreatedDocuments);
+router.get("/get-documents-by-filtered-types", getAllDocsFilteredByTypes);
 
 export default router;
