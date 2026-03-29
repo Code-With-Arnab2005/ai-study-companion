@@ -44,20 +44,22 @@ const data1 = [
 // const fetcher = async (url: string) => await fetch(url).then(res => res)
 
 const Analytics = () => {
-  // fetch Document Chart data
-  const { data: documentData, error, isLoading } = useSWR(
+
+  const { data: documentData, error: documentError, isLoading: documentLoading } = useSWR(
     "/get-documents-by-filtered-types",
     fetcher
   )
 
-  // fetch Subject Graph data
-  /* TODO */
+  const { data: subjectData, error: subjectError, isLoading: subjectLoading } = useSWR(
+    "/get-last-seven-days-subject-filtered-by-date",
+    fetcher
+  )
 
   return (
     <div className='w-full'>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SubjectsGraph data={data1} loading={false} />
-        <DocumentsGraph data={documentData?.data ?? []} loading={isLoading} />
+        <SubjectsGraph data={subjectData?.data ?? []} loading={subjectLoading} />
+        <DocumentsGraph data={documentData?.data ?? []} loading={documentLoading} />
       </div>
     </div>
   )

@@ -31,8 +31,13 @@ export default function SubjectsGraph({ data, loading }: Props) {
                         {/* X Axis */}
                         <XAxis
                             dataKey="date"
+                            interval={0}
                             stroke="black"
                             tick={{ fill: "#475569", fontSize: 15 }}
+                            tickFormatter={(value) => {
+                                const [day, month] = value.split("/"); // "23/3/2026"
+                                return `${day}/${month}`;             // "23/3"
+                            }}
                             label={{
                                 value: "Weeks",
                                 position: "insideBottom",
@@ -77,8 +82,8 @@ export default function SubjectsGraph({ data, loading }: Props) {
                         {/* Line */}
                         <Line
                             type="monotone"
-                            dataKey="uv"
-                            stroke="black"
+                            dataKey="count"
+                            stroke="blue"
                             strokeWidth={2}
                             dot={{ r: 4, fill: "white" }}
                             activeDot={{ r: 6 }}

@@ -13,6 +13,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import SectionLoader from '@/components/SectionLoader';
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink', 'black'];
 
@@ -53,7 +54,6 @@ interface Props {
 }
 
 const getFormattedData = (data: any) => {
-  console.log(data);
   const chartData = Object.keys(data).map((key) => ({
     name: key,
     count: data[key].length,
@@ -64,30 +64,31 @@ const getFormattedData = (data: any) => {
 export default function DocumentsGraph({ data, loading }: Props) {
 
     const chartData = getFormattedData(data);
-    console.log("chartData: ", chartData)
 
     return (
         <div className='w-full max-w-[600px] h-[320px] bg-white rounded-2xl p-4 shadow-sm'>
-            <ResponsiveContainer>
-                <BarChart
-                    data={chartData}
-                    margin={{
-                        top: 20,
-                        right: 0,
-                        left: 0,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Tooltip cursor={{ fillOpacity: 0.5 }} />
-                    <XAxis dataKey="name" />
-                    <YAxis width="auto" />
-                    <Bar dataKey="count" fill="#8884d8" shape={TriangleBar} activeBar>
-                        <LabelList content={CustomColorLabel} position="top" />
-                    </Bar>
-                    <RechartsDevtools />
-                </BarChart>
-            </ResponsiveContainer>
+            {loading ? <SectionLoader /> : (
+                <ResponsiveContainer>
+                    <BarChart
+                        data={chartData}
+                        margin={{
+                            top: 20,
+                            right: 0,
+                            left: 0,
+                            bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip cursor={{ fillOpacity: 0.5 }} />
+                        <XAxis dataKey="name" />
+                        <YAxis width="auto" />
+                        <Bar dataKey="count" fill="#8884d8" shape={TriangleBar} activeBar>
+                            <LabelList content={CustomColorLabel} position="top" />
+                        </Bar>
+                        <RechartsDevtools />
+                    </BarChart>
+                </ResponsiveContainer>
+            )}
         </div>
     );
 }
