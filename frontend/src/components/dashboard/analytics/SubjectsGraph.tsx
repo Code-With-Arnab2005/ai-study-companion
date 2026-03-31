@@ -39,7 +39,7 @@ export default function SubjectsGraph({ data, loading }: Props) {
                                 return `${day}/${month}`;             // "23/3"
                             }}
                             label={{
-                                value: "Weeks",
+                                value: "Date",
                                 position: "insideBottom",
                                 offset: -20,
                                 style: { fill: "black", fontSize: 12 },
@@ -83,7 +83,7 @@ export default function SubjectsGraph({ data, loading }: Props) {
                         <Line
                             type="monotone"
                             dataKey="count"
-                            stroke="blue"
+                            stroke="black"
                             strokeWidth={2}
                             dot={{ r: 4, fill: "white" }}
                             activeDot={{ r: 6 }}

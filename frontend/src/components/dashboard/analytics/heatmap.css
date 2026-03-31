@@ -1,0 +1,43 @@
+/* 🔽 smaller boxes (clean GitHub style) */
+.react-calendar-heatmap rect {
+  width: 10px;
+  height: 10px;
+  rx: 2;
+  ry: 2;
+  transition: all 0.15s ease-in-out;
+}
+
+/* 🔽 tighter spacing */
+.react-calendar-heatmap .react-calendar-heatmap-day {
+  margin: 1px;
+}
+
+/* 🔥 better hover (clean, not heavy) */
+.react-calendar-heatmap rect:hover {
+  stroke: #1e293b; /* slate-800 */
+  stroke-width: 0.8px;
+  cursor: pointer;
+}
+
+/* 🔽 text styling */
+.react-calendar-heatmap text {
+  fill: #64748b;
+  font-size: 9px;
+}
+
+/* 🔽 colors (slightly improved contrast) */
+.color-empty {
+  fill: #f1f5f9;
+}
+
+.color-scale-1 {
+  fill: #93c5fd;
+}
+
+.color-scale-2 {
+  fill: #3b82f6;
+}
+
+.color-scale-3 {
+  fill: #1d4ed8;
+}
