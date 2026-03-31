@@ -6,6 +6,7 @@ import {
     fetchDocumentsBySubjectId,
     getAllDocsFilteredByTypes,
     getAllSubjects,
+    getDailyHeatmapData,
     getNoOfSubjectsForLastSevenDays,
     getNumberOfDocuments,
     getNumberOfPdfNotes,
@@ -34,5 +35,6 @@ router.get("/get-recent-subjects", getRecentCreatedSubjects);
 router.get("/get-recent-documents", getRecentCreatedDocuments);
 router.get("/get-last-seven-days-subject-filtered-by-date", getNoOfSubjectsForLastSevenDays);
 router.get("/get-documents-by-filtered-types", getAllDocsFilteredByTypes);
+router.get("/get-daily-heatmap-data", getDailyHeatmapData);
 
 export default router;
