@@ -8,6 +8,10 @@ const getDocType = (docType) => {
     return "OTHER";
 }
 
+const formatDate = (date) => {
+    return new Date(date).toISOString().split("T")[0];
+}
+
 
 const insertSubject = async (req, res) => {
     try {
@@ -412,7 +416,6 @@ const getRecentCreatedDocuments = async (req, res) => {
     }
 }
 
-/* TODO */
 const getNoOfSubjectsForLastSevenDays = async (req, res) => {
     try {
         const user = await getUserFromToken(req);
@@ -448,7 +451,7 @@ const getNoOfSubjectsForLastSevenDays = async (req, res) => {
 
         // convert to json object
         const result = [];
-        for(let i=6; i>=0; i--){
+        for (let i = 6; i >= 0; i--) {
             const date = new Date();
             date.setDate(today.getDate() - i);
 
@@ -507,6 +510,82 @@ const getAllDocsFilteredByTypes = async (req, res) => {
     }
 }
 
+const getDailyHeatmapData = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        // fetch data for last one year
+        const today = new Date();
+        const lastYear = new Date();
+        lastYear.setFullYear(today.getFullYear() - 1);
+
+        const { data: SubjectData, error: subjectError } = await supabase
+            .from('subjects')
+            .select('*')
+            .eq("user_id", user.id)
+            .gte("created_at", lastYear.toISOString())
+            .lte("created_at", today.toISOString());
+
+        const { data: docsData, error: docsError } = await supabase
+            .from('documents')
+            .select('*')
+            .eq("user_id", user.id)
+            .gte("created_at", lastYear.toISOString())
+            .lte("created_at", today.toISOString());
+
+        const { data: aiNotesData, error: aiNotesError } = await supabase
+            .from('generated_notes')
+            .select('*')
+            .eq("user_id", user.id)
+            .gte("created_at", lastYear.toISOString())
+            .lte("created_at", today.toISOString());
+
+
+        if(subjectError || docsError || aiNotesError){
+            return res.status(500).json({ success: false, message: subjectError.message || docsError.message || aiNotesError.message });
+        }
+
+        // create the response structure for last 1 year
+        const subMap = {};
+        const docsMap = {};
+        const aiMap = {};
+
+        SubjectData.forEach((item) => {
+            const d = formatDate(item.created_at);
+            subMap[d] = (subMap[d] || 0) + 1;
+        })
+        docsData.forEach((item) => {
+            const d = formatDate(item.created_at);
+            docsMap[d] = (docsMap[d] || 0) + 1;
+        })
+        aiNotesData.forEach((item) => {
+            const d = formatDate(item.created_at);
+            aiMap[d] = (aiMap[d] || 0) + 1;
+        })
+        
+        // combine all the maps data
+        const result = []; // {date, subjectCnt, docsCnt, aiDocCnt}
+        for(let d=lastYear; d<=today; d.setDate(d.getDate() + 1)){
+            const formatted = formatDate(d);
+
+            result.push({
+                date: formatted,
+                subjects: subMap[formatted] || 0,
+                documents: docsMap[formatted] || 0,
+                aiNotes: aiMap[formatted] || 0
+            })
+        }
+
+        return res.status(200).json({ success: true, message: "Data fetch and filtered successfully", data: result });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     insertSubject,
     deleteSubject,
@@ -522,5 +601,6 @@ export {
     getRecentCreatedSubjects,
     getRecentCreatedDocuments,
     getNoOfSubjectsForLastSevenDays,
-    getAllDocsFilteredByTypes
+    getAllDocsFilteredByTypes,
+    getDailyHeatmapData
 }
