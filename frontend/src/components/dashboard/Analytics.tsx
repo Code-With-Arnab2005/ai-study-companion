@@ -3,6 +3,7 @@ import SubjectsGraph from './analytics/SubjectsGraph';
 import DocumentsGraph from './analytics/DocumentsGraph';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr/helper';
+import DailyHeatmap from './analytics/DailyHeatmap';
 
 const data1 = [
   { date: "24/1/2026", uv: 6 },
@@ -49,17 +50,23 @@ const Analytics = () => {
     "/get-documents-by-filtered-types",
     fetcher
   )
-
   const { data: subjectData, error: subjectError, isLoading: subjectLoading } = useSWR(
     "/get-last-seven-days-subject-filtered-by-date",
     fetcher
   )
+  const { data: heatMapData, error: heatMapError, isLoading: heatmapLoading } = useSWR(
+    "/get-daily-heatmap-data",
+    fetcher
+  )
 
   return (
-    <div className='w-full'>
+    <div className='w-full flex flex-col gap-10'>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SubjectsGraph data={subjectData?.data ?? []} loading={subjectLoading} />
         <DocumentsGraph data={documentData?.data ?? []} loading={documentLoading} />
+      </div>
+      <div>
+        <DailyHeatmap data={heatMapData?.data ?? []} loading={heatmapLoading} />
       </div>
     </div>
   )
