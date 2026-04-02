@@ -83,7 +83,7 @@ const DailyHeatmap = ({ data, loading }: Props) => {
                     </div>
 
                     <h2 className="text-lg text-center font-semibold">
-                        Activity Heatmap
+                        Activity Heatmap <p className="text-gray-500">(Last 1 Year)</p>
                     </h2>
 
                     <Tooltip
