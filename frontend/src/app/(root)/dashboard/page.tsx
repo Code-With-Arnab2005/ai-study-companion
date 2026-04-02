@@ -5,6 +5,10 @@ import RecentSubjects from "@/components/dashboard/RecentSubjects";
 import StatusCard from "@/components/dashboard/StatusCard";
 import PageWrapper from "@/components/PageWrapper";
 
+export const metadata = {
+    title: "Dashboard - AI Study Companion"
+}
+
 const DashboardPage = () => {
   return (
     <PageWrapper>

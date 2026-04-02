@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuItem } from "./ui/dropdown-menu";
+import Image from "next/image";
 
 const Navbar = () => {
     const supabase = createClient();
@@ -18,10 +19,14 @@ const Navbar = () => {
 
                 {/* Left: Logo + Brand */}
                 <Link href={"/"}>
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
-                            AI
-                        </div>
+                    <div className="flex items-center justify-center gap-3">
+                        <Image
+                            src="/logo1.png"
+                            alt="logo"
+                            width={30}
+                            height={30}
+                            className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold"
+                        />
                         <span className="text-xl font-semibold text-gray-900">
                             AI Study Companion
                         </span>
