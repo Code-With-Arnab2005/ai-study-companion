@@ -24,12 +24,8 @@ export const userExitsts = async (email: string) => {
 }
 
 export const getCurrentUser = async () => {
-  try {
     const res = await axios.get("/get-current-user");
     return res;
-  } catch (error: any) {
-    toast.error(error.message);
-  }
 };
 
 export const sendMail = async (email: string) => {
