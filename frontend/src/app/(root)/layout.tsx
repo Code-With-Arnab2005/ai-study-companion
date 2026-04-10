@@ -3,7 +3,7 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { AppSidebar } from '@/components/Sidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const layout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -12,8 +12,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex w-full">
                     <SidebarProvider>
                         <div className="flex w-full">
-
-                            <AppSidebar />
+                            <Suspense fallback={null}>
+                                <AppSidebar />
+                            </Suspense>
 
                             <div className="flex-1 min-w-0 flex flex-col">
                                 <Navbar />
