@@ -80,10 +80,12 @@ const SubjectPage = () => {
       <section className="max-w-6xl mx-auto px-6 py-10">
 
         <Link href={"/subjects"}>
+        <div className="w-full">
           <Button
-            className="fixed top-22 left-10 mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
+            className="mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
             <ArrowBigLeft fill="white"/>All Subjects
           </Button>
+        </div>
         </Link>
 
         {/* Subject Header */}
