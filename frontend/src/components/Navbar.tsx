@@ -46,7 +46,7 @@ const Navbar = () => {
 
     return (
         <header className="w-full fixed top-0 bg-white border-b border-gray-200 px-8 py-4 z-50">
-            <div className={`${open ? 'max-w-6xl' : 'max-w-8xl mx-auto'} flex items-center justify-between`}>
+            <div className={`${open ? 'max-w-6xl' : 'max-w-8xl mx-auto'} flex items-center justify-between transition-all duration-300 ease-in-out`}>
 
                 {/* Left: Logo + Brand */}
                 <SidebarTrigger />
