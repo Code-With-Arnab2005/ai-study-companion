@@ -14,7 +14,9 @@ import {
     ArrowDown,
     ArrowUp,
     ChevronDown,
-    ChevronRight
+    ChevronRight,
+    RollerCoaster,
+    Brain
 } from "lucide-react"
 
 import {
@@ -60,8 +62,13 @@ export function AppSidebar() {
         {
             title: "AI Sessions",
             href: "/ai-sessions",
-            icon: BookOpen,
+            icon: Brain,
         },
+        {
+            title: "Documents",
+            href: "/documents",
+            icon: Notebook
+        }
     ]
     const GroupMenuItems: GroupmenuItemsType[] = [
         {

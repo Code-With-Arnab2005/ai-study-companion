@@ -5,6 +5,7 @@ import {
     deleteSubject,
     fetchDocumentsBySubjectId,
     getAllDocsFilteredByTypes,
+    getAllDocuments,
     getAllSubjects,
     getDailyHeatmapData,
     getNoOfSubjectsForLastSevenDays,
@@ -36,5 +37,6 @@ router.get("/get-recent-documents", getRecentCreatedDocuments);
 router.get("/get-last-seven-days-subject-filtered-by-date", getNoOfSubjectsForLastSevenDays);
 router.get("/get-documents-by-filtered-types", getAllDocsFilteredByTypes);
 router.get("/get-daily-heatmap-data", getDailyHeatmapData);
+router.get("/get-all-documents", getAllDocuments);
 
 export default router;

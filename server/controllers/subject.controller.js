@@ -586,6 +586,29 @@ const getDailyHeatmapData = async (req, res) => {
     }
 }
 
+const getAllDocuments = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { data, error } = await supabase
+            .from("documents")
+            .select("*")
+            .eq("user_id", user.id)
+        
+        if(error){
+            return res.status(500).json({ success: false, message: error.message ?? "Something went wrong" });
+        }
+
+        return res.status(200).json({ success: true, message: "Documents fetched successfully", data });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     insertSubject,
     deleteSubject,
@@ -602,5 +625,6 @@ export {
     getRecentCreatedDocuments,
     getNoOfSubjectsForLastSevenDays,
     getAllDocsFilteredByTypes,
-    getDailyHeatmapData
+    getDailyHeatmapData,
+    getAllDocuments
 }

@@ -19,7 +19,6 @@ const Navbar = () => {
         setLoading(true);
         try {
             const res = await getCurrentUser();
-            console.log("user: ", res);
             if (!res || !res.data?.success) {
                 toast.error(res.data.message);
                 setLoading(false);

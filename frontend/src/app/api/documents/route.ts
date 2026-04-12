@@ -15,11 +15,6 @@ const getToken = async () => {
 
 export async function GET(req: NextRequest) {
   try {
-    const url = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
-    console.log("fetching");
-    // const res = await fetch(`${url}/api/get-documents-by-filtered-types`);
-    // const data = await res.json();
-
     const token = await getToken();
     if (!token) {
       return NextResponse.json({
@@ -28,12 +23,11 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const res = await axios.get(`/get-documents-by-filtered-types`, {
+    const res = await axios.get(`/get-all-documents`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("documents route:", res.data);
 
     if (!res.data.success) {
       return NextResponse.json({
