@@ -7,11 +7,14 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { ArrowBigRight } from 'lucide-react';
 import { Spinner } from '../ui/spinner';
+import { AlertDialog, AlertDialogTrigger } from '../ui/alert-dialog';
+import { ConfirmDeleteAlert } from './ConfirmDeleteAlert';
+import { Button } from '../ui/button';
 
 const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Subject[], loading: boolean, fetchSubjects: Function }) => {
 
     const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
-    const [deleteLoading, setDeleteLoading] = useState<Map<string, boolean>>(new Map()); //subject-id -> deleteLoading
+    
     // const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
     const setSubjectTagsBySubjectId = async () => {
@@ -46,39 +49,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
         setSubjectToTags(newMap);
     }
 
-    const handleDelete = async (subject: Subject) => {
-        const subject_id = subject.id;
-        if(!subject_id){
-            toast.error("Subject id not found");
-            return;
-        }
-        setDeleteLoading(prev => {
-            const newMap = new Map(prev);
-            newMap.set(subject_id, true);
-            return newMap;
-        })
-        try {
-            const res = await deleteSubject(subject_id);
-            if(!res?.data){
-                toast.error("Something went wrong");
-                return;
-            }
-            if(!res.data.success){
-                toast.error(res.data.message);
-                return;
-            }
-            fetchSubjects();
-            toast.success(`Subject ${subject.subject_name} deleted successfully`);
-        } catch (error: any) {
-            toast.error(error.message);
-        } finally {
-            setDeleteLoading(prev => {
-                const newMap = new Map(prev);
-                newMap.set(subject_id, false);
-                return newMap;
-            });
-        }
-    }
+    
 
     useEffect(() => {
         if (subjects.length === 0) return;
@@ -163,14 +134,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                         </div>
 
                         {/* Delete */}
-                        {deleteLoading.get(subject.id!) ? <Spinner /> : (
-                            <button
-                                onClick={() => handleDelete(subject!)}
-                                className="hover:cursor-pointer text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
-                            >
-                                Delete
-                            </button>
-                        )}
+                        <ConfirmDeleteAlert subject={subject} fetchSubjects={fetchSubjects}/>
                     </div>
 
                 </div>
