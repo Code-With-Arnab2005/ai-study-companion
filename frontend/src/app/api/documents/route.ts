@@ -22,8 +22,12 @@ export async function GET(req: NextRequest) {
         message: "Acess Token is missing",
       });
     }
+    
+    const { searchParams } = new URL(req.url);
+    const page = searchParams.get("page") || "1";
+    const limit = searchParams.get("limit") || "5";
 
-    const res = await axios.get(`/get-all-documents`, {
+    const res = await axios.get(`/get-paginated-documents?page=${page}&limit=${limit}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

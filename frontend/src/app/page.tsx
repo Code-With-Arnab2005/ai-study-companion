@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import { getCurrentUser } from "@/lib/actions/auth-actions";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@/types";
@@ -11,14 +12,21 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const supabase = createClient();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchUser = async() => {
-    const {data, error} = await supabase.auth.getUser();
-    if(error){
-      toast.error(error.message);
-      setUser(null);
-    } else {
-      setUser(data.user)
+    try {
+      const {data, error} = await supabase.auth.getUser();
+      if(error){
+        toast.error(error.message);
+        setUser(null);
+      } else {
+        setUser(data.user)
+      }
+    } catch (error: any) {
+      toast.error(error.message ?? "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -26,6 +34,7 @@ export default function HomePage() {
     fetchUser();
   }, [])
 
+  if(loading) return <Loader />
   return (
     <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-100 via-indigo-100 to-purple-100">
       <div className="max-w-3xl px-6 text-center text-gray-900">
