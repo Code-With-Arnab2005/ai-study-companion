@@ -544,7 +544,7 @@ const getDailyHeatmapData = async (req, res) => {
             .lte("created_at", today.toISOString());
 
 
-        if(subjectError || docsError || aiNotesError){
+        if (subjectError || docsError || aiNotesError) {
             return res.status(500).json({ success: false, message: subjectError.message || docsError.message || aiNotesError.message });
         }
 
@@ -565,10 +565,10 @@ const getDailyHeatmapData = async (req, res) => {
             const d = formatDate(item.created_at);
             aiMap[d] = (aiMap[d] || 0) + 1;
         })
-        
+
         // combine all the maps data
         const result = []; // {date, subjectCnt, docsCnt, aiDocCnt}
-        for(let d=lastYear; d<=today; d.setDate(d.getDate() + 1)){
+        for (let d = lastYear; d <= today; d.setDate(d.getDate() + 1)) {
             const formatted = formatDate(d);
 
             result.push({
@@ -580,6 +580,67 @@ const getDailyHeatmapData = async (req, res) => {
         }
 
         return res.status(200).json({ success: true, message: "Data fetch and filtered successfully", data: result });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getPaginatedDocuments = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        let { page = 1, limit = 5 } = req.query;
+
+        page = Math.max(parseInt(page) || 1, 1);
+        limit = Math.max(parseInt(limit) || 5, 5);
+
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
+
+        const { data, count, error } = await supabase
+            .from("documents")
+            .select("*", { count: "exact" })
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .range(from, to)
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message ?? "Something went wrong" });
+        }
+
+        const response = await Promise.all(
+            data?.map(async (doc) => {
+                const subject_id = doc.subject_id ?? "";
+
+                const { data: subject, error } = await supabase
+                    .from("subjects")
+                    .select("subject_name")
+                    .eq("id", subject_id)
+                    .single(); // important
+
+                return {
+                    ...doc,
+                    subject_name: subject?.subject_name || null
+                };
+            })
+        );
+
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Documents fetched successfully",
+                data: {
+                    documents: response,
+                    currPage: page,
+                    totalPages: Math.ceil(count / limit),
+                    totalDocuments: count
+                }
+            });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: error.message });
@@ -602,5 +663,6 @@ export {
     getRecentCreatedDocuments,
     getNoOfSubjectsForLastSevenDays,
     getAllDocsFilteredByTypes,
-    getDailyHeatmapData
+    getDailyHeatmapData,
+    getPaginatedDocuments
 }

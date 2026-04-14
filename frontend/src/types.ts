@@ -46,5 +46,6 @@ export type Document = {
     doc_size: number | null,
     subject_id: string | null,
     user_id: string | null,
-    created_at: string | null
+    created_at: string | null,
+    subject_name: string | null
 }

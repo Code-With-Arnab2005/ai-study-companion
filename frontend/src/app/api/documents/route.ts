@@ -9,17 +9,11 @@ const getToken = async () => {
     console.error("getToken Function Error: ", error.message);
     return null;
   }
-  console.log("getToken: ", data);
   return data.session?.access_token;
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const url = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
-    console.log("fetching");
-    // const res = await fetch(`${url}/api/get-documents-by-filtered-types`);
-    // const data = await res.json();
-
     const token = await getToken();
     if (!token) {
       return NextResponse.json({
@@ -27,13 +21,16 @@ export async function GET(req: NextRequest) {
         message: "Acess Token is missing",
       });
     }
+    
+    const { searchParams } = new URL(req.url);
+    const page = searchParams.get("page") || "1";
+    const limit = searchParams.get("limit") || "5";
 
-    const res = await axios.get(`/get-documents-by-filtered-types`, {
+    const res = await axios.get(`/get-paginated-documents?page=${page}&limit=${limit}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("documents route:", res.data);
 
     if (!res.data.success) {
       return NextResponse.json({

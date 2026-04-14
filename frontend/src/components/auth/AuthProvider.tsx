@@ -15,6 +15,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            // console.log("accessToken: ", session?.access_token)
             if(isAuthRoute && session?.user){
                 router.push("/dashboard");
             } else if(!isPublicRoute && !session?.user){
