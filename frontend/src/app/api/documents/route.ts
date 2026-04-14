@@ -9,7 +9,6 @@ const getToken = async () => {
     console.error("getToken Function Error: ", error.message);
     return null;
   }
-  console.log("getToken: ", data);
   return data.session?.access_token;
 }
 

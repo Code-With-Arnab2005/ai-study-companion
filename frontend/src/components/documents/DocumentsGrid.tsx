@@ -2,12 +2,15 @@
 
 import { options } from "@/lib/swr/helper";
 import { Document } from "@/types";
-import { File, FileText, Image, Trash2 } from "lucide-react";
+import { Download, Eye, File, FileText, Image, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
 import { Button } from "../ui/button";
 import SectionLoader from "../SectionLoader";
+import { createClient } from "@/lib/supabase/client";
+import { deleteDocument } from "@/lib/actions/subject-actions";
+import Link from "next/link";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -22,6 +25,7 @@ const fetcher = async (url: string) => {
 
 const DocumentsGrid = () => {
   const limit = 5;
+  const supabase = createClient()
 
   const getFilesize = (bytes: number) => {
     if (bytes === 0) return "0 B";
@@ -57,14 +61,20 @@ const DocumentsGrid = () => {
 
     return 'other';
   }
-  // const openPreview = async () => {
-  //   const { data } = await supabase.storage
-  //     .from('documents')
-  //     .createSignedUrl(document.doc_url as string, 60 * 60); // 1 hour
+  const handleOpenPreview = async (document: Document) => {
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .createSignedUrl(String(document.doc_url), 60 * 60) // 1 hour
 
-  //   setPreviewUrl(data?.signedUrl ?? null);
-  //   setOpen(true);
-  // }
+    if (error) {
+      toast.error(error.message ?? "Error loading preview, please try again later");
+    }
+    setOpenPreview(true);
+
+    const prevDoc = document;
+    prevDoc.doc_url = data?.signedUrl as string;
+    setPreviewDocument(prevDoc);
+  }
   const getCreatedTimeofDocument = (time: string) => {
     if (!time) return;
 
@@ -80,32 +90,71 @@ const DocumentsGrid = () => {
 
     return ist;
   }
-  // const handleDelteFile = async () => {
-  //   const doc_id = document.id;
-  //   if (!doc_id) {
-  //     toast.error("document id not found");
-  //     return;
-  //   }
-  //   const res = await deleteDocument(doc_id);
-  //   if (!res?.data) {
-  //     toast.error("Something went wrong");
-  //     return;
-  //   }
-  //   if (!res.data.success) {
-  //     toast.error(res.data.error);
-  //     return;
-  //   }
-  //   toast.success(`Document ${document.doc_name} deleted successfully`);
-  //   fetchDocuments();
-  //   fetchSubject();
-  // }
+  const handleDelteFile = async (document: Document) => {
+    const doc_id = document.id;
+    if (!doc_id) {
+      toast.error("document id not found");
+      return;
+    }
+    const res = await deleteDocument(doc_id);
+    if (!res?.data) {
+      toast.error("Something went wrong");
+      return;
+    }
+    if (!res.data.success) {
+      toast.error(res.data.error);
+      return;
+    }
+    toast.success(`Document ${document.doc_name} deleted successfully`);
+    setCurrPage(prev => prev);
+  }
+  const getFileExtension = (mime: string) => {
+    if (mime === "application/pdf") return "pdf";
+    if (mime.startsWith("image/")) return mime.split("/")[1]; // jpeg, png
+    if (
+      mime === "application/msword"
+    ) return "doc";
+    if (
+      mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) return "docx";
+
+    return "bin"; // fallback
+  };
+  const handleDownloadFile = async (doc: Document) => {
+    try {
+      const ext = getFileExtension(String(doc.doc_type));
+      const { data, error } = await supabase.storage
+        .from("documents")
+        .createSignedUrl(String(doc.doc_url), 60 * 5, {
+          download: String(`${doc.doc_name}.${ext}`)
+        }) // valid for 2 min
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      // create an invisible download link
+      const link = document.createElement("a");
+      link.href = data.signedUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Docuemnt downloaded successfully");
+    } catch (error: any) {
+      toast.error(error ?? error?.message ?? "Error Downloading Document");
+    }
+  }
 
 
   const [currPage, setCurrPage] = useState<number>(1);
+  const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
 
   const { data, error, isLoading } = useSWR(`/api/documents?page=${currPage}&limit=${limit}`, fetcher, options);
 
-  if(error){
+  if (error) {
     toast.error(error.message || "Something went wrong");
   }
 
@@ -115,7 +164,7 @@ const DocumentsGrid = () => {
 
   return (
     <div>
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden min-h-[40vh]">
 
         {/* Table Header */}
         <div className="grid grid-cols-6 px-6 py-4 bg-slate-50 text-sm font-medium text-slate-600 border-b">
@@ -123,12 +172,16 @@ const DocumentsGrid = () => {
           <span>Type</span>
           <span>Subject</span>
           <span>Created</span>
-          <span className="text-right">Actions</span>
+          <span className="mr-7 text-right">Actions</span>
         </div>
 
         {/* Rows */}
         <div className="divide-y">
-          {isLoading && <SectionLoader />}
+          {isLoading && (
+            <div className="place-items-center mt-12 h-full">
+              <SectionLoader />
+            </div>
+          )}
           {!isLoading && currDocs?.length === 0 && (
             <p className="p-6 text-sm text-slate-500">
               No documents found.
@@ -164,8 +217,10 @@ const DocumentsGrid = () => {
                 </span>
 
                 {/* Subject */}
-                <span className="text-sm text-slate-600">
-                  {doc.subject_name ?? "any"}
+                <span className="text-sm text-blue-600 underline">
+                  <Link href={`/subjects/${doc.subject_id}`}>
+                    {doc.subject_name ?? "other"}
+                  </Link>
                 </span>
 
                 {/* Created */}
@@ -174,12 +229,24 @@ const DocumentsGrid = () => {
                 </span>
 
                 {/* Actions */}
-                <div className="flex justify-end gap-2">
-                  <button className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition">
-                    Open
+                <div className="flex justify-end items-center gap-1">
+                  <button
+                    onClick={() => handleOpenPreview(doc)}
+                    className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
+                  >
+                    <Eye size={20} />
                   </button>
 
-                  <button className="p-2 rounded-md hover:bg-red-50 text-red-500 transition">
+                  <button
+                    onClick={() => handleDownloadFile(doc)}
+                    className="cursor-pointer p-2 rounded-md hover:bg-green-50 text-green-500 transition"
+                  >
+                    <Download size={20} />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelteFile(doc)}
+                    className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
                     <Trash2 size={16} />
                   </button>
                 </div>
@@ -205,6 +272,75 @@ const DocumentsGrid = () => {
           </Button>
         </div>
       </div>
+
+      {/* PREVIEW MODAL */}
+      {openPreview && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl w-[90%] h-[90%] relative p-4 flex flex-col">
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setOpenPreview(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              <X />
+            </button>
+
+            {/* HEADER */}
+            <div className="mb-3">
+              <h2 className="font-semibold text-lg">
+                {previewDocument?.doc_name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {getFileType(previewDocument!).toUpperCase()} •{" "}
+                {getFilesize((previewDocument?.doc_size || 0) as number)}
+              </p>
+              <p className="text-sm text-gray-500">
+                Created At: {getCreatedTimeofDocument(previewDocument?.created_at as string)}
+              </p>
+            </div>
+
+            {/* PREVIEW */}
+            <div className="w-full h-full border rounded-lg overflow-hidden">
+              {getFileType(previewDocument!) === "pdf" && (
+                <iframe
+                  src={previewDocument?.doc_url as string}
+                  className="w-full h-full"
+                />
+              )}
+
+              {getFileType(previewDocument!) === "image" && (
+                <img
+                  src={previewDocument?.doc_url as string}
+                  alt={previewDocument?.doc_name as string}
+                  className="w-full h-full object-contain"
+                />
+              )}
+
+              {getFileType(previewDocument!) === "doc" && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <p className="text-gray-600 mb-4">
+                    Preview not supported for DOC files
+                  </p>
+                  <a
+                    href={previewDocument?.doc_url as string}
+                    target="_blank"
+                    className="text-indigo-600 underline"
+                  >
+                    Download File
+                  </a>
+                </div>
+              )}
+
+              {getFileType(previewDocument!) === "other" && (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Unsupported file type
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
