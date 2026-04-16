@@ -6,11 +6,13 @@ import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import SectionLoader from '../SectionLoader';
+import { Button } from '../ui/button';
+import { ShowAllGeneratedNotesDrawer } from './ShowAllGeneratedNotesDrawer';
 
 const GenerateNotes = () => {
     const [topicName, setTopicName] = useState("");
     const [depth, setDepth] = useState("Short");
-    const [level, setLevel] = useState("BEginner");
+    const [level, setLevel] = useState("Beginner");
     const [generatedNotes, setGeneratedNotes] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const [isFetchingLatestNote, setIsFetchingLatestNote] = useState(false);
@@ -34,13 +36,12 @@ const GenerateNotes = () => {
             }
         } catch (error: any) {
             const errorMessage = error.response.data.message
-                                || "Something went wrong"
+                || "Something went wrong"
             toast.error(errorMessage);
         } finally {
             setIsGenerating(false);
         }
     }
-
     const getLastNote = async () => {
         setIsFetchingLatestNote(true);
         try {
@@ -59,7 +60,7 @@ const GenerateNotes = () => {
             }
         } catch (error: any) {
             const errorMessage = error.response.data.message
-                                || "Something went wrong"
+                || "Something went wrong"
             toast.error(errorMessage)
         } finally {
             setIsFetchingLatestNote(false);
@@ -68,14 +69,20 @@ const GenerateNotes = () => {
 
     return (
         <>
-            <div>
-                <button
+            <div className='fixed top-25 right-25 flex justify-center items-center gap-2'>
+                <Button
                     disabled={isFetchingLatestNote}
                     onClick={getLastNote}
-                    className={`hover:cursor-pointer fixed top-25 right-35 min-w-[15vw] bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4 py-2.5 text-white font-semibold  transition`}
+                    className={`hover:cursor-pointer min-w-[10vw] rounded-lg px-4 py-2.5 text-white font-semibold transition`}
                 >
                     {isFetchingLatestNote ? <SectionLoader /> : "Get Last Note"}
-                </button>
+                </Button>
+                <ShowAllGeneratedNotesDrawer
+                    setTopicName={setTopicName}
+                    setLevel={setLevel}
+                    setDepth={setDepth}
+                    setGeneratedNotes={setGeneratedNotes}
+                />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left: Input Form */}
@@ -160,7 +167,6 @@ const GenerateNotes = () => {
                             )}
 
                 </section>
-
             </div>
         </>
     )
