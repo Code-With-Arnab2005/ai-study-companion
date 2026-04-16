@@ -49,3 +49,13 @@ export type Document = {
     created_at: string | null,
     subject_name: string | null
 }
+
+export type AIGeneratedNotes = {
+    id: string | null,
+    user_id: string | null,
+    created_at: string | null,
+    topic: string | null,
+    depth: string | null,
+    level: string | null,
+    notes: string | null,
+}

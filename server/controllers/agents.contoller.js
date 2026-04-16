@@ -105,8 +105,52 @@ const getAllGeneratedNotes = async (req, res) => {
     }
 }
 
+const getGeneratedNotesByFilter = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        let { page = 1, limit = 5 } = req.query;
+        page = parseInt(page);
+        limit = parseInt(limit);
+
+        const from = Math.max((page - 1) * limit, 0);
+        const to = from + limit - 1;
+
+        const { data, count, error } = await supabase
+            .from("generated_notes")
+            .select("*", { count: "exact" })
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .range(from, to)
+
+        if (error) {
+            return res.status(500).json({ success: false, message: error.message ?? "Something went wrong" });
+        }
+
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Notes fetched successfully",
+                data: {
+                    notes: data,
+                    currPage: Math.max(page, 1),
+                    totalPages: Math.ceil(count / limit),
+                    totalNotes: count
+                }
+            })
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     makeNotes,
     getLatestGeneratdNotes,
-    getAllGeneratedNotes
+    getAllGeneratedNotes,
+    getGeneratedNotesByFilter
 }
