@@ -271,7 +271,7 @@ function SidebarTrigger({
           size="icon"
           className={cn(
             "size-9 rounded-md transition-all duration-200",
-            "hover:bg-gray-100 hover:shadow-sm",
+            "hover:bg-card text-card-foreground hover:shadow-sm",
             "flex items-center justify-center",
             className
           )}
