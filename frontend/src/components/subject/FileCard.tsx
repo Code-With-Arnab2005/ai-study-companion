@@ -136,12 +136,12 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
             {/* PREVIEW MODAL */}
             {open && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-                    <div className="bg-white rounded-xl w-[90%] h-[90%] relative p-4 flex flex-col">
+                    <div className="bg-card rounded-xl w-[90%] h-[90%] relative p-4 flex flex-col">
 
                         {/* CLOSE */}
                         <button
                             onClick={() => setOpen(false)}
-                            className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                            className="absolute top-3 right-3 text-card-foreground hover:text-slate-300"
                         >
                             <X />
                         </button>
@@ -151,11 +151,11 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                             <h2 className="font-semibold text-lg">
                                 {document.doc_name}
                             </h2>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-card-secondary-foreground">
                                 {fileType.toUpperCase()} •{" "}
                                 {getFilesize(document.doc_size as number)}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-card-secondary-foreground">
                                 Created At: {createdTimeOfDocument}
                             </p>
                         </div>
@@ -179,7 +179,7 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
 
                             {fileType === "doc" && (
                                 <div className="flex flex-col items-center justify-center h-full">
-                                    <p className="text-gray-600 mb-4">
+                                    <p className="text-card-secondary-foreground mb-4">
                                         Preview not supported for DOC files
                                     </p>
                                     <a
@@ -193,7 +193,7 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                             )}
 
                             {fileType === "other" && (
-                                <div className="flex items-center justify-center h-full text-gray-500">
+                                <div className="flex items-center justify-center h-full text-card-secondary-foreground">
                                     Unsupported file type
                                 </div>
                             )}
