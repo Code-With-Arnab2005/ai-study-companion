@@ -18,7 +18,7 @@ const DailyHeatmap = ({ data, loading }: Props) => {
     lastYear.setFullYear(today.getFullYear() - 1);
 
     return (
-        <div className="bg-white p-4 rounded-2xl shadow-sm w-full overflow-x-auto">
+        <div className="p-4 rounded-2xl bg-card shadow-sm w-full overflow-x-auto">
             {loading ? <SectionLoader /> : (
                 <>
                     <div className="overflow-x-auto">

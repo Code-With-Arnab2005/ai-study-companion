@@ -9,13 +9,7 @@ import {
     Settings,
     Notebook,
     LucideIcon,
-    ArrowBigDown,
-    ArrowBigUp,
-    ArrowDown,
-    ArrowUp,
-    ChevronDown,
     ChevronRight,
-    RollerCoaster,
     Brain
 } from "lucide-react"
 
@@ -24,7 +18,6 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
@@ -49,41 +42,18 @@ export function AppSidebar() {
     const searchParams = useSearchParams();
 
     const menuItems: MenuItemsType[] = [
-        {
-            title: "Dashboard",
-            href: "/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            title: "Subjects",
-            href: "/subjects",
-            icon: BookOpen,
-        },
-        {
-            title: "AI Sessions",
-            href: "/ai-sessions",
-            icon: Brain,
-        },
-        {
-            title: "Documents",
-            href: "/documents",
-            icon: Notebook
-        }
+        { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+        { title: "Subjects", href: "/subjects", icon: BookOpen },
+        { title: "AI Sessions", href: "/ai-sessions", icon: Brain },
+        { title: "Documents", href: "/documents", icon: Notebook }
     ]
+
     const GroupMenuItems: GroupmenuItemsType[] = [
         {
             group: "Profile and Settings",
             items: [
-                {
-                    title: "Profile",
-                    href: "/profile",
-                    icon: User2
-                },
-                {
-                    title: "Settings",
-                    href: "#", // TODO
-                    icon: Settings
-                }
+                { title: "Profile", href: "/profile", icon: User2 },
+                { title: "Settings", href: "#", icon: Settings }
             ]
         },
         {
@@ -93,8 +63,7 @@ export function AppSidebar() {
                     title: "Generate Note",
                     href: "/ai-sessions/new?mode=generate-notes",
                     icon: Notebook
-                },
-                // TODO
+                }
             ]
         }
     ]
@@ -102,10 +71,10 @@ export function AppSidebar() {
     const [openGroups, setOpenGroups] = useState<string[]>([]);
 
     return (
-        <Sidebar collapsible="offcanvas" className="border-r border-r-gray-300 bg-white">
+        <Sidebar className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
 
             {/* 🔷 Header */}
-            <SidebarHeader className="px-4 py-4.5 border-b border-b-gray-300">
+            <SidebarHeader className="px-4 py-4.5 border-b border-sidebar-border">
                 <Link href={"/"}>
                     <div className="flex items-center justify-center gap-3">
                         <Image
@@ -113,9 +82,9 @@ export function AppSidebar() {
                             alt="logo"
                             width={30}
                             height={30}
-                            className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold"
+                            className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold"
                         />
-                        <span className="text-xl font-semibold text-gray-900">
+                        <span className="text-xl font-semibold">
                             AI Study Companion
                         </span>
                     </div>
@@ -126,19 +95,18 @@ export function AppSidebar() {
             <SidebarContent className="px-2 py-4">
 
                 <SidebarGroup>
-
-                    {/* Non-collapsible Items */}
                     <SidebarMenu>
-                        {menuItems.map((item: MenuItemsType) => {
+                        {menuItems.map((item) => {
                             const isActive = pathname === item.href;
+
                             return (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton
                                         asChild
                                         className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200
                                             ${isActive
-                                                ? "bg-blue-100 text-blue-700 shadow-sm pointer-events-none"
-                                                : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                                                ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm pointer-events-none"
+                                                : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                             }`}
                                     >
                                         <Link href={item.href} className="flex items-center gap-2">
@@ -150,36 +118,35 @@ export function AppSidebar() {
                             );
                         })}
                     </SidebarMenu>
-
                 </SidebarGroup>
 
-
-                {/* Collapsible Items */}
-                {GroupMenuItems.map((group: GroupmenuItemsType) => {
+                {/* Collapsible Groups */}
+                {GroupMenuItems.map((group) => {
                     const isOpen = openGroups.includes(group.group);
+
                     const handleOpenChange = (open: boolean) => {
-                        setOpenGroups((prev: string[]) => (
+                        setOpenGroups(prev =>
                             open ? [...prev, group.group] : prev.filter(g => g !== group.group)
-                        ))
-                    }
+                        );
+                    };
 
                     return (
                         <Collapsible
-                            onOpenChange={(open: boolean) => handleOpenChange(open)}
                             key={group.group}
+                            onOpenChange={handleOpenChange}
                         >
-                            <SidebarGroup className="border border-gray-400 rounded-xl px-2 py-1 bg-gray-50/40">
+                            <SidebarGroup className="border border-sidebar-group-border rounded-xl px-2 py-1 bg-sidebar-group-bg">
 
                                 <CollapsibleTrigger className="w-full text-left">
                                     <SidebarHeader className="px-2 py-2">
                                         <div className="flex justify-between items-center">
-                                            <p className="text-xs font-semibold text-gray-500 tracking-wide">
+                                            <p className="text-xs font-semibold text-sidebar-group-label tracking-wide">
                                                 {group.group}
                                             </p>
 
                                             <ChevronRight
-                                                className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-90 text-blue-500" : ""
-                                                    }`}
+                                                className={`w-4 h-4 text-sidebar-icon transition-transform duration-300 
+                                                ${isOpen ? "rotate-90 text-sidebar-icon-active" : ""}`}
                                             />
                                         </div>
                                     </SidebarHeader>
@@ -187,11 +154,10 @@ export function AppSidebar() {
 
                                 <CollapsibleContent className="pb-1">
                                     <SidebarMenu>
-                                        {group.items.map((item: MenuItemsType) => {
+                                        {group.items.map((item) => {
                                             const isActive =
                                                 pathname === "/ai-sessions/new"
-                                                    ? searchParams.get("mode") ===
-                                                    item.href.split("mode=")[1]
+                                                    ? searchParams.get("mode") === item.href.split("mode=")[1]
                                                     : pathname === item.href;
 
                                             return (
@@ -200,8 +166,8 @@ export function AppSidebar() {
                                                         asChild
                                                         className={`rounded-lg px-3 py-2 text-sm transition-all duration-200
                                                             ${isActive
-                                                                ? "bg-blue-100 text-blue-700 shadow-sm pointer-events-none"
-                                                                : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                                                                ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm pointer-events-none"
+                                                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                                             }`}
                                                     >
                                                         <Link href={item.href} className="flex items-center gap-2">
@@ -217,15 +183,14 @@ export function AppSidebar() {
 
                             </SidebarGroup>
                         </Collapsible>
-                    )
+                    );
                 })}
-
 
             </SidebarContent>
 
             {/* 🔷 Footer */}
-            <SidebarFooter className="px-3 py-3 border-t">
-                <p className="text-xs text-gray-500">
+            <SidebarFooter className="px-3 py-3 border-t border-sidebar-border">
+                <p className="text-xs text-sidebar-foreground/70">
                     © {new Date().getFullYear()} Arnab
                 </p>
             </SidebarFooter>

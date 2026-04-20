@@ -102,20 +102,20 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
         <>
             {/* CARD */}
             <div
-                className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm transform transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-md hover:cursor-pointer hover:bg-gray-100"
+                className="bg-card text-card-foreground border hover:bg-card border-gray-200 rounded-xl p-5 shadow-sm transform transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-md hover:cursor-pointer"
             >
                 <div className="flex items-center gap-3 mb-2">
-                    <h3 className="flex gap-2 items-center font-semibold text-gray-800">
+                    <h3 className="flex gap-2 items-center font-semibold">
                         {getFileIcon(fileType)}
                         {document.doc_name}
                     </h3>
                 </div>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-card-secondary-foreground">
                     {fileType.toUpperCase()} • {getFilesize(document.doc_size as number)}
                 </p>
 
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-card-secondary-foreground mb-4">
                     Created At: {createdTimeOfDocument}
                 </p>
 

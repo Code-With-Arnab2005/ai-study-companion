@@ -8,12 +8,17 @@ import { getCurrentUser } from "@/lib/actions/auth-actions";
 import { useEffect, useState } from "react";
 import { User } from "@/types";
 import { SidebarTrigger, useSidebar } from "./ui/sidebar";
+import { ThemeToggle } from "./theme-components/ThemeToggle";
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
     const supabase = createClient();
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme==="dark";
 
     const fetchUser = async () => {
         setLoading(true);
@@ -44,7 +49,7 @@ const Navbar = () => {
     const { open } = useSidebar();
 
     return (
-        <header className="w-full fixed top-0 bg-white border-b border-gray-200 px-8 py-4 z-50">
+        <header className={`w-full fixed top-0 [background:var(--navbar_bg)] text-foreground border-b border-sidebar-border px-8 py-4 z-50`}>
             <div className={`${open ? 'max-w-6xl' : 'max-w-8xl mx-auto'} flex items-center justify-between transition-all duration-300 ease-in-out`}>
 
                 {/* Left: Logo + Brand */}
@@ -92,45 +97,50 @@ const Navbar = () => {
                     </a>
                 </nav> */}
 
-                <div className="flex gap-4 items-center justify-center">
-                    {/* Profile menu */}
-                    {!loading && (
-                        <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition text-sm font-medium text-gray-800 hover:cursor-pointer">
-                                    <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold">
-                                        {user?.fullname[0]?.toUpperCase()}
-                                    </div>
-                                    {user?.fullname.split(' ')[0]}
-                                </button>
-                            </DropdownMenuTrigger>
+                <div className="flex justify-center items-center gap-2">
+                    {/* Dark/Light Toggle Button */}
+                    <ThemeToggle />
 
-                            <DropdownMenuContent
-                                align="end"
-                                sideOffset={8}
-                                className="w-48 min-w-48 mt-2 rounded-xl border border-gray-200 bg-white shadow-lg p-1"
-                            >
-                                <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-gray-500">
-                                    My Account
-                                </DropdownMenuLabel>
+                    <div className="flex gap-4 items-center justify-center">
+                        {/* Profile menu */}
+                        {!loading && (
+                            <DropdownMenu modal={false}>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card-secondary hover:bg-card-hover transition text-sm font-medium text-card-foreground hover:cursor-pointer">
+                                        <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold">
+                                            {user?.fullname[0]?.toUpperCase()}
+                                        </div>
+                                        {user?.fullname.split(' ')[0]}
+                                    </button>
+                                </DropdownMenuTrigger>
 
-                                <DropdownMenuSeparator className="bg-gray-200 my-1" />
-
-                                <Link href={`/profile`}>
-                                    <DropdownMenuItem className="px-3 py-2 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-indigo-600 transition">
-                                        Profile
-                                    </DropdownMenuItem>
-                                </Link>
-
-                                <DropdownMenuItem
-                                    onClick={handleLogout}
-                                    className="px-3 py-2 rounded-lg text-sm text-red-600 cursor-pointer hover:bg-red-50 transition"
+                                <DropdownMenuContent
+                                    align="end"
+                                    sideOffset={8}
+                                    className="w-48 min-w-48 mt-2 rounded-xl border text-card-foreground border-gray-200 bg-card shadow-lg p-1"
                                 >
-                                    Logout
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    )}
+                                    <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-card-secondary-foreground">
+                                        My Account
+                                    </DropdownMenuLabel>
+
+                                    <DropdownMenuSeparator className="bg-gray-200 my-1" />
+
+                                    <Link href={`/profile`}>
+                                        <DropdownMenuItem className="px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-card-hover hover:text-indigo-600 transition">
+                                            Profile
+                                        </DropdownMenuItem>
+                                    </Link>
+
+                                    <DropdownMenuItem
+                                        onClick={handleLogout}
+                                        className="px-3 py-2 rounded-lg text-sm text-red-600 cursor-pointer hover:bg-red-50 transition"
+                                    >
+                                        Logout
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+                    </div>
                 </div>
             </div>
         </header>

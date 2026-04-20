@@ -2,8 +2,7 @@
 
 export default function Loader() {
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center
-                    bg-linear-to-br from-slate-100 to-slate-200">
+    <div className="absolute inset-0 z-40 flex items-center justify-center">
 
       <div className="flex flex-col items-center gap-6">
 

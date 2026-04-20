@@ -164,10 +164,10 @@ const DocumentsGrid = () => {
 
   return (
     <div>
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden min-h-[40vh]">
+      <div className="bg-card border text-card-foreground border-slate-200 rounded-2xl overflow-hidden min-h-[40vh]">
 
         {/* Table Header */}
-        <div className="grid grid-cols-6 px-6 py-4 bg-slate-50 text-sm font-medium text-slate-600 border-b">
+        <div className="grid grid-cols-6 px-6 py-4 text-sm font-medium border-b">
           <span className="col-span-2">Document</span>
           <span>Type</span>
           <span>Subject</span>
@@ -183,7 +183,7 @@ const DocumentsGrid = () => {
             </div>
           )}
           {!isLoading && currDocs?.length === 0 && (
-            <p className="p-6 text-sm text-slate-500">
+            <p className="p-6 text-sm">
               No documents found.
             </p>
           )}
@@ -193,7 +193,7 @@ const DocumentsGrid = () => {
             return (
               <div
                 key={doc.id}
-                className="grid grid-cols-6 items-center px-6 py-4 hover:bg-slate-50 transition"
+                className="grid grid-cols-6 items-center px-6 py-4 hover:bg-card-hover transition"
               >
                 {/* Document Name */}
                 <div className="col-span-2 flex items-center gap-3">
@@ -202,17 +202,17 @@ const DocumentsGrid = () => {
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-slate-800">
+                    <p className="text-sm font-medium">
                       {doc.doc_name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-card-secondary-foreground">
                       {getFilesize(doc.doc_size as number)}
                     </p>
                   </div>
                 </div>
 
                 {/* Type */}
-                <span className="text-sm text-slate-600">
+                <span className="text-sm">
                   {docType}
                 </span>
 
@@ -224,7 +224,7 @@ const DocumentsGrid = () => {
                 </span>
 
                 {/* Created */}
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-card-secondary-foreground">
                   {getCreatedTimeofDocument(doc.created_at as string)}
                 </span>
 
@@ -276,12 +276,12 @@ const DocumentsGrid = () => {
       {/* PREVIEW MODAL */}
       {openPreview && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-xl w-[90%] h-[90%] relative p-4 flex flex-col">
+          <div className="bg-card rounded-xl w-[90%] h-[90%] relative p-4 flex flex-col">
 
             {/* CLOSE */}
             <button
               onClick={() => setOpenPreview(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              className="absolute top-3 right-3 text-gray-500 hover:bg-card-hover"
             >
               <X />
             </button>
@@ -291,11 +291,11 @@ const DocumentsGrid = () => {
               <h2 className="font-semibold text-lg">
                 {previewDocument?.doc_name}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-card-secondary-foreground">
                 {getFileType(previewDocument!).toUpperCase()} •{" "}
                 {getFilesize((previewDocument?.doc_size || 0) as number)}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-card-secondary-foreground">
                 Created At: {getCreatedTimeofDocument(previewDocument?.created_at as string)}
               </p>
             </div>

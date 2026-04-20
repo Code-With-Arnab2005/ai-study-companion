@@ -50,9 +50,9 @@ const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, s
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+      <div className="fixed inset-0 z-500 flex items-center justify-center">
+        <div className="bg-card text-card-foreground rounded-2xl shadow-xl w-full max-w-md p-6">
+          <h3 className="text-xl font-semibold mb-4">
             Add New Subject
           </h3>
 
@@ -67,7 +67,7 @@ const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, s
           <div className="flex justify-end gap-3 mt-6">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
+              className="px-4 py-2 rounded-lg text-card-secondary-foreground hover:bg-card-hover"
             >
               Cancel
             </button>

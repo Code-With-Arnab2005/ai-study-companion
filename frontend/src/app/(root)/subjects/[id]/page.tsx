@@ -1,5 +1,6 @@
 "use client";
 import Loader from "@/components/Loader";
+import PageWrapper from "@/components/PageWrapper";
 import FileCard from "@/components/subject/FileCard";
 import FileUploadCard from "@/components/subject/FileUploadCard";
 import { Button } from "@/components/ui/button";
@@ -76,56 +77,58 @@ const SubjectPage = () => {
   if (loading) return <Loader />
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-100 via-indigo-100 to-purple-100 mt-15">
-      <section className="max-w-6xl mx-auto px-6 py-10">
+    <PageWrapper>
+      <main className="">
+        <section className="max-w-6xl mx-auto px-6 py-10">
 
-        <Link href={"/subjects"}>
-        <div className="w-full">
-          <Button
-            className="mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
-            <ArrowBigLeft fill="white"/>All Subjects
-          </Button>
-        </div>
-        </Link>
-
-        {/* Subject Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div className="flex flex-col justify-center items-left">
-            <h1 className="text-3xl font-bold text-gray-800">
-              {subject?.subject_name}
-            </h1>
-            <p>Created At: {createdAtTimeofSubject}</p>
+          <Link href={"/subjects"}>
+          <div className="w-full">
+            <Button
+              className="mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
+              <ArrowBigLeft fill="white"/>All Subjects
+            </Button>
           </div>
-          <h2 className="font-bold">Total Documents: {subject?.no_of_documents}</h2>
-        </div>
+          </Link>
 
-        {/* Upload Card */}
-        <FileUploadCard fetchSubject={fetchSubject} fetchDocuments={fetchDocuments} />
-
-        {/* Uploaded Files Section */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Uploaded Files
-          </h2>
-
-          {/* Files Grid */}
-          <div className="border-2 border-gray-300 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-h-[35vh] overflow-y-scroll">
-            {documents.map((document: Document) => (
-              <div key={document.id}>
-                <FileCard document={document} fetchDocuments={fetchDocuments} fetchSubject={fetchSubject} />
-              </div>
-            ))}
-
-            {documents?.length === 0 && (
-              <p className="text-gray-600 col-span-full">
-                No files uploaded yet. Upload your first PDF or notes 🚀
-              </p>
-            )}
+          {/* Subject Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex flex-col justify-center items-left">
+              <h1 className="text-3xl font-bold">
+                {subject?.subject_name}
+              </h1>
+              <p>Created At: {createdAtTimeofSubject}</p>
+            </div>
+            <h2 className="font-bold">Total Documents: {subject?.no_of_documents}</h2>
           </div>
-        </div>
 
-      </section>
-    </main>
+          {/* Upload Card */}
+          <FileUploadCard fetchSubject={fetchSubject} fetchDocuments={fetchDocuments} />
+
+          {/* Uploaded Files Section */}
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Uploaded Files
+            </h2>
+
+            {/* Files Grid */}
+            <div className="border-2 border-gray-300 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-h-[35vh] overflow-y-scroll">
+              {documents.map((document: Document) => (
+                <div key={document.id}>
+                  <FileCard document={document} fetchDocuments={fetchDocuments} fetchSubject={fetchSubject} />
+                </div>
+              ))}
+
+              {documents?.length === 0 && (
+                <p className="col-span-full">
+                  No files uploaded yet. Upload your first PDF or notes 🚀
+                </p>
+              )}
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </PageWrapper>
   );
 };
 
