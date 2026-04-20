@@ -50,8 +50,8 @@ const RecentDocuments = () => {
     }, [])
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-card rounded-2xl shadow-sm border p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">
                 Recent Notes / PDFs
             </h2>
 

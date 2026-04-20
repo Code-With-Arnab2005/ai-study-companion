@@ -72,8 +72,8 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
     }
 
     return (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-card border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
+            <h2 className="text-lg font-semibold text-card-foreground mb-4">
                 Upload New File
             </h2>
 
@@ -91,7 +91,7 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
                 <input
                     type="file"
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png"
-                    className="border border-gray-300 rounded-lg px-4 py-2 bg-white"
+                    className="border border-gray-300 rounded-lg px-4 py-2"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
 

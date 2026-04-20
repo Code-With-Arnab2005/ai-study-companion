@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 import SectionLoader from '@/components/SectionLoader';
+import { useTheme } from 'next-themes';
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink', 'black'];
 
@@ -54,19 +55,20 @@ interface Props {
 }
 
 const getFormattedData = (data: any) => {
-  const chartData = Object.keys(data).map((key) => ({
-    name: key,
-    count: data[key].length,
-  }));
-  return chartData;
+    const chartData = Object.keys(data).map((key) => ({
+        name: key,
+        count: data[key].length,
+    }));
+    return chartData;
 }
 
 export default function DocumentsGraph({ data, loading }: Props) {
-
     const chartData = getFormattedData(data);
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark"
 
     return (
-        <div className='w-full max-w-[600px] h-[320px] bg-white rounded-2xl p-4 shadow-sm'>
+        <div className={`w-full max-w-[600px] h-[320px] rounded-2xl p-4 shadow-sm bg-card`}>
             {loading ? <SectionLoader /> : (
                 <ResponsiveContainer>
                     <BarChart
@@ -78,11 +80,25 @@ export default function DocumentsGraph({ data, loading }: Props) {
                             bottom: 5,
                         }}
                     >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip cursor={{ fillOpacity: 0.5 }} />
-                        <XAxis dataKey="name" />
-                        <YAxis width="auto" />
-                        <Bar dataKey="count" fill="#8884d8" shape={TriangleBar} activeBar>
+                        <CartesianGrid stroke={isDark ? "white" : ""} strokeDasharray="3 3" />
+                        <Tooltip
+                            cursor={{ fillOpacity: 0.5 }}
+                            contentStyle={{
+                                backgroundColor: isDark ? "#111827" : "#ffffff",
+                                border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                                borderRadius: "8px",
+                            }}
+                            labelStyle={{
+                                color: isDark ? "#ffffff" : "#111827",
+                                fontWeight: 600,
+                            }}
+                            itemStyle={{
+                                color: isDark ? "#ffffff" : "#111827",
+                            }}
+                        />
+                        <XAxis stroke={isDark ? "white" : ""} dataKey="name" />
+                        <YAxis stroke={isDark ? "white" : ""} width="auto" />
+                        <Bar dataKey="count" fill={isDark ? "white" : "black"} shape={TriangleBar} activeBar>
                             <LabelList content={CustomColorLabel} position="top" />
                         </Bar>
                         <RechartsDevtools />

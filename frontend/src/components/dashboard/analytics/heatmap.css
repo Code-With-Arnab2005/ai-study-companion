@@ -41,3 +41,19 @@
 .color-scale-3 {
   fill: #1d4ed8;
 }
+
+.dark .color-empty {
+  fill: oklch(0.30 0.01 260); /* slightly above card → visible grid */
+}
+
+.dark .color-scale-1 {
+  fill: oklch(0.45 0.06 260); /* low activity */
+}
+
+.dark .color-scale-2 {
+  fill: oklch(0.60 0.12 260); /* medium */
+}
+
+.dark .color-scale-3 {
+  fill: oklch(0.72 0.18 260); /* high → clearly visible */
+}

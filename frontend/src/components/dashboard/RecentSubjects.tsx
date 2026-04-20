@@ -35,15 +35,15 @@ const RecentSubjects = () => {
     }, [])
 
     return (
-        <div className="min-h-[50vh] lg:col-span-2 bg-white rounded-2xl shadow-sm border p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="min-h-[50vh] lg:col-span-2 bg-card rounded-2xl shadow-sm border p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">
                 Recently Created Subjects
             </h2>
 
             {isLoading ? <SectionLoader />
                 : (recentSubjects?.length === 0) ? (
                     <Link href={"/subjects"}>
-                        <span className='ml-5 underline hover:text-blue-700 text-gray-800'>No Subjects Yet, Please create a new Subject</span>
+                        <span className='ml-5 underline hover:text-blue-700 text-foreground'>No Subjects Yet, Please create a new Subject</span>
                     </Link>
                 )
                     : (

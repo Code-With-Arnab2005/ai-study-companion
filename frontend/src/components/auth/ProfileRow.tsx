@@ -12,8 +12,8 @@ export function ProfileRow({
   return (
     <div className="flex items-center justify-between border-b border-slate-100 pb-4">
       <div>
-        <p className="text-sm text-slate-500">{label}</p>
-        <p className="text-base font-medium text-slate-900 mt-0.5">
+        <p className="text-sm text-card-foreground">{label}</p>
+        <p className="text-base font-medium text-card-secondary-foreground mt-0.5">
           {value || '—'}
         </p>
       </div>

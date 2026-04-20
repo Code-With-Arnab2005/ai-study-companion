@@ -72,13 +72,13 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
             {subjects?.length > 0 && subjects.map((subject: Subject) => (
                 <div
                     key={subject.id}
-                    className="group bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-indigo-300 h-[26vh] flex flex-col justify-between"
+                    className="group bg-card border text-card-foreground border-slate-200 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-indigo-300 h-[26vh] flex flex-col justify-between mt-2"
                 >
 
                     {/* Header */}
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-semibold text-slate-800 group-hover:text-indigo-600 transition">
+                            <h3 className="text-lg font-semibold group-hover:text-indigo-600 transition">
                                 {subject.subject_name}
                             </h3>
                             <ArrowBigRight
@@ -96,7 +96,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                     </div>
 
                     {/* Meta Info */}
-                    <div className="mt-3 space-y-1 text-sm text-slate-500">
+                    <div className="mt-3 space-y-1 text-sm">
                         <p>📄 {subject.no_of_documents ?? 0} Documents</p>
                         <p>
                             📅{" "}

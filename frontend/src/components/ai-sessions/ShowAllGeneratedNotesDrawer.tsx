@@ -28,12 +28,12 @@ export function ShowAllGeneratedNotesDrawer({ setTopicName, setDepth, setLevel, 
         <Drawer open={open} onOpenChange={setOpen} direction="right">
             <DrawerTrigger asChild>
                 <Button
-                    className={`hover:cursor-pointer min-w-[10vw] rounded-lg px-4 py-2.5 text-white font-semibold  transition`}
+                    className={`hover:cursor-pointer min-w-[10vw] rounded-lg px-4 py-2.5 font-semibold  transition`}
                 >
                     Show All Notes
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="px-2">
+            <DrawerContent className="bg-card px-2">
                 <DrawerHeader>
                     <DrawerTitle className="text-xl">Your Generated Notes</DrawerTitle>
                     <DrawerDescription>Here are the notes you have generated so far</DrawerDescription>

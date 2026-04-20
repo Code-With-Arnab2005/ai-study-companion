@@ -281,7 +281,7 @@ function SidebarTrigger({
           }}
           {...props}
         >
-          <Menu className="size-5 text-gray-700" />
+          <Menu className="size-5" />
         </Button>
       </TooltipTrigger>
 

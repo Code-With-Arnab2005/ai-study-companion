@@ -73,7 +73,7 @@ const GenerateNotes = () => {
                 <Button
                     disabled={isFetchingLatestNote}
                     onClick={getLastNote}
-                    className={`hover:cursor-pointer min-w-[10vw] rounded-lg px-4 py-2.5 text-white font-semibold transition`}
+                    className={`hover:cursor-pointer min-w-[10vw] rounded-lg px-4 py-2.5 font-semibold transition`}
                 >
                     {isFetchingLatestNote ? <SectionLoader /> : "Get Last Note"}
                 </Button>
@@ -86,21 +86,21 @@ const GenerateNotes = () => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left: Input Form */}
-                <section className="lg:col-span-1 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <section className="lg:col-span-1 bg-card rounded-2xl p-6 border border-sidebar-border shadow-sm">
 
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">
+                    <h2 className="text-lg font-semibold text-card-foreground mb-6">
                         Specify the Details of your topic
                     </h2>
 
                     {/* Topic */}
                     <div className="mb-5">
-                        <label className="block text-sm font-medium text-slate-600 mb-2">
+                        <label className="block text-sm font-medium text-card-secondary-foreground mb-2">
                             Topic Name
                         </label>
                         <input
                             type="text"
                             placeholder="e.g. Photosynthesis"
-                            className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                            className="w-full rounded-lg border border-slate-300 px-4 py-2 text-card-foreground placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             value={topicName}
                             onChange={e => setTopicName(e.target.value)}
                         />
@@ -108,11 +108,11 @@ const GenerateNotes = () => {
 
                     {/* Depth */}
                     <div className="mb-5">
-                        <label className="block text-sm font-medium text-slate-600 mb-2">
+                        <label className="block text-sm font-medium text-card-secondary-foreground mb-2">
                             Depth
                         </label>
                         <select
-                            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                            className="w-full rounded-lg border border-slate-300 bg-card-secondary px-4 py-2 text-card-foreground focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             value={depth}
                             onChange={e => setDepth(e.target.value)}
                         >
@@ -124,11 +124,11 @@ const GenerateNotes = () => {
 
                     {/* Level */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium text-slate-600 mb-2">
+                        <label className="block text-sm font-medium text-card-secondary-foreground mb-2">
                             Level
                         </label>
                         <select
-                            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                            className="w-full rounded-lg border border-slate-300 bg-card-secondary px-4 py-2 text-card-foreground focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             value={level}
                             onChange={e => setLevel(e.target.value)}
                         >
@@ -150,7 +150,7 @@ const GenerateNotes = () => {
                 </section>
 
                 {/* Right: Output Section */}
-                <section className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <section className="lg:col-span-2 bg-card rounded-2xl p-6 border border-sidebar-border shadow-sm">
                     {(generatedNotes.length === 0 && !isGenerating) ? <div className='text-gray-800 text-lg h-full flex items-center justify-center'>Please generate a note</div>
                         : isGenerating ?
                             (
