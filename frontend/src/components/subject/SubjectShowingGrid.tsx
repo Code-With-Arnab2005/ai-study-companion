@@ -14,7 +14,7 @@ import { Button } from '../ui/button';
 const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Subject[], loading: boolean, fetchSubjects: Function }) => {
 
     const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
-    
+
     // const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
     const setSubjectTagsBySubjectId = async () => {
@@ -49,7 +49,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
         setSubjectToTags(newMap);
     }
 
-    
+
 
     useEffect(() => {
         if (subjects.length === 0) return;
@@ -115,15 +115,26 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
 
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2">
-                            {subject.id &&
-                                subjectToTags.get(subject.id)?.map((tag: string, index) => (
-                                    <span
-                                        key={index}
-                                        className="rounded-md bg-slate-100 text-slate-600 px-2 py-0.5 text-[11px] font-medium border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition"
-                                    >
-                                        🏷️ {tag}
+                            <div className="flex items-center gap-2 max-w-50 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-thin scrollbar-thumb-slate-300/60 hover:scrollbar-thumb-indigo-400">
+
+                                {subject.id &&
+                                    subjectToTags.get(subject.id)?.slice(0, 2).map((tag: string, index) => (
+                                        <span
+                                            key={index}
+                                            className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium rounded-full border border-slate-200 bg-slate-100 text-slate-600 
+                hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all duration-200"
+                                        >
+                                            <span className="text-[10px]">🏷️</span>
+                                            {tag}
+                                        </span>
+                                    ))}
+
+                                {subject.id && subjectToTags.get(subject.id)!?.length > 2 && (
+                                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-50 text-slate-400 border border-dashed border-slate-200">
+                                        +{subjectToTags.get(subject.id)!.length - 2}
                                     </span>
-                                ))}
+                                )}
+                            </div>
 
                             {subject.id &&
                                 subjectToTags.get(subject.id)?.length === 0 && (
@@ -134,7 +145,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                         </div>
 
                         {/* Delete */}
-                        <ConfirmDeleteAlert subject={subject} fetchSubjects={fetchSubjects}/>
+                        <ConfirmDeleteAlert subject={subject} fetchSubjects={fetchSubjects} />
                     </div>
 
                 </div>
