@@ -64,7 +64,7 @@ export function ConfirmDeleteAlert({ subject, fetchSubjects }: { subject: Subjec
                     Delete
                 </button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-card">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>

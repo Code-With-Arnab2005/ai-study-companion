@@ -226,6 +226,8 @@ const getTagsBySubjectId = async (req, res) => {
 
             else if (specific_tag_type.includes('plain')) specific_tag_type = 'note';
 
+            else if(specific_tag_type.includes('powerpoint')) specific_tag_type = 'ppt';
+
             tags.push(specific_tag_type);
         })
 
