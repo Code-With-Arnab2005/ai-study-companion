@@ -2,12 +2,13 @@
 import { addDocument } from '@/lib/actions/subject-actions';
 import { createClient } from '@/lib/supabase/client';
 import { useParams } from 'next/navigation';
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import toast from 'react-hot-toast';
 import { Spinner } from '../ui/spinner';
 
 const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, fetchDocuments: any}) => {
     const [loading, setLoading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const params = useParams();
     const { id: subject_id } = params;
@@ -64,8 +65,10 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
             }
         }
 
+        if(fileInputRef.current){
+            fileInputRef.current.value = "";
+        }
         setDocName("");
-        setFile(null);
         setLoading(false);
         fetchSubject();
         fetchDocuments();
@@ -89,6 +92,7 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
 
                 {/* File Input */}
                 <input
+                    ref={fileInputRef}
                     type="file"
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png"
                     className="border border-gray-300 rounded-lg px-4 py-2"

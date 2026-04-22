@@ -5,6 +5,7 @@ import { Document } from "@/types";
 import { File, FileText, Image, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Spinner } from "../ui/spinner";
 
 
 const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Document, fetchDocuments: any, fetchSubject: any }) => {
@@ -12,6 +13,8 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [createdTimeOfDocument, setCreatedAtTimeofDocuemnt] = useState("-");
     const supabase = createClient();
+    const [isLoadingPreview, setIsLoadingPreview] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const getFilesize = (bytes: number) => {
         if (bytes === 0) return "0 B";
@@ -48,12 +51,20 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
         return 'other';
     }
     const openPreview = async () => {
-        const { data } = await supabase.storage
-            .from('documents')
-            .createSignedUrl(document.doc_url as string, 60 * 60); // 1 hour
+        setIsLoadingPreview(true);
+        try {
+            const { data } = await supabase.storage
+                .from('documents')
+                .createSignedUrl(document.doc_url as string, 60 * 60); // 1 hour
 
-        setPreviewUrl(data?.signedUrl ?? null);
-        setOpen(true);
+            setPreviewUrl(data?.signedUrl ?? null);
+            setOpen(true);
+        } catch (error: any) {
+            toast.error(error.message ?? error ?? "Something went wrong");
+        } finally {
+            setIsLoadingPreview(false);
+        }
+
     }
     const getCreatedTimeofDocument = async (time: string) => {
         if (!time) return;
@@ -71,27 +82,34 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
         setCreatedAtTimeofDocuemnt(ist);
     }
     const handleDelteFile = async () => {
-        const doc_id = document.id;
-        if(!doc_id){
-            toast.error("document id not found");
-            return;
+        setIsDeleting(true);
+        try {
+            const doc_id = document.id;
+            if (!doc_id) {
+                toast.error("document id not found");
+                return;
+            }
+            const res = await deleteDocument(doc_id);
+            if (!res?.data) {
+                toast.error("Something went wrong");
+                return;
+            }
+            if (!res.data.success) {
+                toast.error(res.data.error);
+                return;
+            }
+            toast.success(`Document ${document.doc_name} deleted successfully`);
+            fetchDocuments();
+            fetchSubject();
+        } catch (error: any) {
+            toast.error(error.message ?? error ?? "Something went wrong");
+        } finally {
+            setIsDeleting(false);
         }
-        const res = await deleteDocument(doc_id);
-        if(!res?.data){
-            toast.error("Something went wrong");
-            return;
-        }
-        if(!res.data.success){
-            toast.error(res.data.error);
-            return;
-        }
-        toast.success(`Document ${document.doc_name} deleted successfully`);
-        fetchDocuments();
-        fetchSubject();
     }
 
     useEffect(() => {
-        if(document){
+        if (document) {
             getCreatedTimeofDocument(document.created_at as string);
         }
     }, [document])
@@ -107,7 +125,7 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                 <div className="flex items-center gap-3 mb-2">
                     <h3 className="flex gap-2 items-center font-semibold">
                         {getFileIcon(fileType)}
-                        {document.doc_name}
+                        {document.doc_name?.slice(0, 25)} {document.doc_name?.length!> 25 && <span>...</span>}
                     </h3>
                 </div>
 
@@ -121,14 +139,16 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
 
                 <div className="flex gap-4 text-sm">
                     <button
+                        disabled={isDeleting}
                         onClick={handleDelteFile}
                         className="bg-red-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-red-600 hover:cursor-pointer">
-                        Delete
+                        {isDeleting ? <Spinner /> : "Delete"}
                     </button>
                     <button
+                        disabled={isLoadingPreview}
                         onClick={openPreview}
                         className="bg-green-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-green-600 hover:cursor-pointer">
-                        View
+                        {isLoadingPreview ? <Spinner /> : "View"}
                     </button>
                 </div>
             </div>

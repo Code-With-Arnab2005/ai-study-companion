@@ -2,6 +2,8 @@
 import { insertSubject } from "@/lib/actions/subject-actions";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
   fetchSubjects: any;
@@ -13,30 +15,38 @@ type Props = {
 };
 
 const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, setIsModalOpen, onClose }: Props) => {
-  
+  const [loading, setLoading] = useState<boolean>(false);
+
   const handleAddSubject = async () => {
-    if (!subjectName || subjectName.length === 0) {
-      toast.error("Subject name is requried");
-      return;
+    setLoading(true);
+    try {
+      if (!subjectName || subjectName.length === 0) {
+        toast.error("Subject name is requried");
+        return;
+      }
+
+      const res = await insertSubject({ subject_name: subjectName });
+
+      if (!res?.data) {
+        toast.error("Something went wrong, please try again!");
+        return;
+      }
+
+      if (!res?.data.success) {
+        toast.error(res?.data?.message);
+        return;
+      }
+
+      toast.success("Subject added successfully");
+
+      setIsModalOpen(false);
+      setSubjectName("");
+      fetchSubjects();
+    } catch (error: any) {
+      toast.error(error.message ?? error ?? "Something went wrong, please try again later");
+    } finally {
+      setLoading(false);
     }
-
-    const res = await insertSubject({ subject_name: subjectName });
-
-    if (!res?.data) {
-      toast.error("Something went wrong, please try again!");
-      return;
-    }
-
-    if (!res?.data.success) {
-      toast.error(res?.data?.message);
-      return;
-    }
-
-    toast.success("Subject added successfully");
-
-    setIsModalOpen(false);
-    setSubjectName("");
-    fetchSubjects();
   }
 
   if (!isOpen) return null;
@@ -73,10 +83,12 @@ const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, s
             </button>
 
             <Button
+              disabled={loading}
               className="px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-800 hover:cursor-pointer"
               onClick={handleAddSubject}
             >
-              Add Subject
+              {loading ? <Spinner /> : "Add Subject"}
+              
             </Button>
           </div>
         </div>

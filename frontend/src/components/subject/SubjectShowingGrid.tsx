@@ -59,7 +59,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
     if (loading) return <Loader />
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-4 px-4
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 mb-4 px-4
                 overflow-y-auto max-h-[70vh]
                 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
 
@@ -79,7 +79,7 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
                             <h3 className="text-lg font-semibold group-hover:text-indigo-600 transition">
-                                {subject.subject_name}
+                                {subject.subject_name?.slice(0, 30)} {subject.subject_name?.length! > 20 && <span>...</span>}
                             </h3>
                             <ArrowBigRight
                                 className="text-slate-400 group-hover:text-indigo-500 transition"
@@ -115,13 +115,13 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
 
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2">
-                            <div className="flex items-center gap-2 max-w-50 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-thin scrollbar-thumb-slate-300/60 hover:scrollbar-thumb-indigo-400">
+                            <div className="flex items-center gap-2 whitespace-nowrap scroll-smooth scrollbar-thin scrollbar-thumb-slate-300/60 hover:scrollbar-thumb-indigo-400">
 
                                 {subject.id &&
-                                    subjectToTags.get(subject.id)?.slice(0, 2).map((tag: string, index) => (
+                                    subjectToTags.get(subject.id)?.slice(0, 4).map((tag: string, index) => (
                                         <span
                                             key={index}
-                                            className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium rounded-full border border-slate-200 bg-slate-100 text-slate-600 
+                                            className="inline-flex justify-center items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium rounded-full border border-slate-200 bg-slate-100 text-slate-600 
                 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all duration-200"
                                         >
                                             <span className="text-[10px]">🏷️</span>
@@ -129,9 +129,9 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                                         </span>
                                     ))}
 
-                                {subject.id && subjectToTags.get(subject.id)!?.length > 2 && (
+                                {subject.id && subjectToTags.get(subject.id)!?.length > 4 && (
                                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-50 text-slate-400 border border-dashed border-slate-200">
-                                        +{subjectToTags.get(subject.id)!.length - 2}
+                                        +{subjectToTags.get(subject.id)!.length - 4}
                                     </span>
                                 )}
                             </div>
@@ -155,4 +155,4 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
     )
 }
 
-export default SubjectShowingGrid
+export default SubjectShowingGrid;
