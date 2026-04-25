@@ -25,8 +25,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "5";
+    const subject = searchParams.get("subject") || "ALL";
 
-    const res = await axios.get(`/get-paginated-documents?page=${page}&limit=${limit}`, {
+    const res = await axios.get(`/get-paginated-documents?page=${page}&limit=${limit}&subject=${subject}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
