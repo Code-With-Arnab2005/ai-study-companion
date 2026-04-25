@@ -226,7 +226,7 @@ const getTagsBySubjectId = async (req, res) => {
 
             else if (specific_tag_type.includes('plain')) specific_tag_type = 'note';
 
-            else if(specific_tag_type.includes('powerpoint')) specific_tag_type = 'ppt';
+            else if (specific_tag_type.includes('powerpoint')) specific_tag_type = 'ppt';
 
             tags.push(specific_tag_type);
         })
@@ -595,7 +595,7 @@ const getPaginatedDocuments = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        let { page = 1, limit = 5 } = req.query;
+        let { page = 1, limit = 5, subject = "ALL" } = req.query;
 
         page = Math.max(parseInt(page) || 1, 1);
         limit = Math.max(parseInt(limit) || 5, 5);
@@ -603,12 +603,19 @@ const getPaginatedDocuments = async (req, res) => {
         const from = (page - 1) * limit;
         const to = from + limit - 1;
 
-        const { data, count, error } = await supabase
+        let query = supabase
             .from("documents")
             .select("*", { count: "exact" })
             .eq("user_id", user.id)
             .order("created_at", { ascending: false })
             .range(from, to)
+        
+        // filter by subject_id
+        if(subject !== "ALL"){
+            query = query.eq("subject_id", subject);
+        }
+
+        const { data, count, error } = await query;
 
         if (error) {
             return res.status(500).json({ success: false, message: error.message ?? "Something went wrong" });
