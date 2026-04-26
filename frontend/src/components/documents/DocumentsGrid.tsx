@@ -2,7 +2,7 @@
 
 import { options } from "@/lib/swr/helper";
 import { Document, Subject } from "@/types";
-import { Download, Eye, File, FileText, Image, MoreHorizontal, MoreVertical, Trash2, X } from "lucide-react";
+import { Download, Eye, File, FileText, Image, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
@@ -13,6 +13,8 @@ import { deleteDocument, fetchAllSubjects } from "@/lib/actions/subject-actions"
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import SubjectFilterDropdown from "./SubjectFilterDropdown";
+import TimeRangeFilterDropdown from "./TimeRangeFilterDropdown";
+import DocTypeFilterDropdown from "./DocTypeFilterDropdown";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -64,6 +66,10 @@ const DocumentsGrid = () => {
         return <Image className="text-blue-600" size={24} />;
       case "doc":
         return <File className="text-indigo-600" size={24} />;
+      case "text":
+        return <Text className="text-black" size={24} />;
+      case "ppt":
+        return <Presentation className="text-orange-500" size={24} />
       default:
         return <File className="text-gray-500" size={24} />;
     }
@@ -80,6 +86,10 @@ const DocumentsGrid = () => {
     ) {
       return 'doc';
     }
+
+    if(extension?.includes("text")) return "text";
+
+    if(extension?.includes("powerpoint") || extension?.includes("presentation")) return "ppt";
 
     return 'other';
   }
@@ -181,10 +191,12 @@ const DocumentsGrid = () => {
 
   // filters
   const [filterSubjectId, setFilterSubjectId] = useState<string>("ALL");
-  console.log(filterSubjectId)
+  const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
+  const [filterDocType, setFilterDocType] = useState<string>("ALL");
+  
 
   const { data, error, isLoading } = useSWR(
-    `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}`,
+    `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}&timeRange=${filterTimeRange}&docType=${filterDocType}`,
     fetcher,
     options
   );
@@ -199,11 +211,23 @@ const DocumentsGrid = () => {
 
   return (
     <div>
-      <div className="mb-4">
-        {/* Subject Filter Option */}
+      <div className="mb-4 flex gap-3">
+        {/* Subject Filter Options */}
         <SubjectFilterDropdown
           subjects={subjects}
           setFilterSubjectId={setFilterSubjectId}
+          setCurrPage={setCurrPage}
+        />
+
+        {/* Time Range Filter Options */}
+        <TimeRangeFilterDropdown
+          setFilterTimeRange={setFilterTimeRange}
+          setCurrPage={setCurrPage}
+        />
+
+        {/* Doc Type Filter Options */}
+        <DocTypeFilterDropdown
+          setFilterDocType={setFilterDocType}
           setCurrPage={setCurrPage}
         />
 

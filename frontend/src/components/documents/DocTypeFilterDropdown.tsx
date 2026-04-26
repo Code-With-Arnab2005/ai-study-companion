@@ -3,21 +3,28 @@ import { Subject } from '@/types';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface Props {
-    subjects: Subject[];
-    setFilterSubjectId: (val: string) => void;
+    setFilterDocType: (val: string) => void;
     setCurrPage: (val: number) => void;
 }
 
-const SubjectFilterDropdown = ({ subjects, setFilterSubjectId, setCurrPage }: Props) => {
+const validDocTypes = [
+    "pdf",
+    "word-documents",
+    "ppt",
+    "image",
+    "text-documents",
+    "other"
+]
 
+const DocTypeFilterDropdown = ({ setFilterDocType, setCurrPage }: Props) => {
     return (
         <div className='flex flex-col gap-2 items-start'>
-            <div className='font-semibold text-foreground'>Subject</div>
+            <div className='font-semibold text-foreground'>Document Type</div>
             <Select
                 defaultValue='ALL'
                 onValueChange={val => {
                     setCurrPage(1)
-                    setFilterSubjectId(val)
+                    setFilterDocType(val)
                 }}>
                 <SelectTrigger className='w-[17vw] bg-card! text-card-foreground hover:bg-card-hover border'>
                     <SelectValue placeholder="" />
@@ -25,8 +32,8 @@ const SubjectFilterDropdown = ({ subjects, setFilterSubjectId, setCurrPage }: Pr
                 <SelectContent className='w-[17vw] border' side='bottom' position='popper'>
                     <SelectGroup>
                         <SelectItem value='ALL'>All</SelectItem>
-                        {subjects?.map((sub: Subject) => (
-                            <SelectItem value={sub.id!} key={sub.id}>{sub.subject_name?.toUpperCase()}</SelectItem>
+                        {validDocTypes?.map((type: string) => (
+                            <SelectItem value={type} key={type}>{type.toUpperCase()}</SelectItem>
                         ))}
                     </SelectGroup>
                 </SelectContent>
@@ -35,4 +42,4 @@ const SubjectFilterDropdown = ({ subjects, setFilterSubjectId, setCurrPage }: Pr
     )
 }
 
-export default SubjectFilterDropdown;
+export default DocTypeFilterDropdown
