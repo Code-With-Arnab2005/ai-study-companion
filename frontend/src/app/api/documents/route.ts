@@ -21,17 +21,21 @@ export async function GET(req: NextRequest) {
         message: "Acess Token is missing",
       });
     }
-    
+
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "5";
     const subject = searchParams.get("subject") || "ALL";
+    const timeRange = searchParams.get("timeRange") || "ALL";
+    const docType = searchParams.get("docType") || "ALL";
 
-    const res = await axios.get(`/get-paginated-documents?page=${page}&limit=${limit}&subject=${subject}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const res = await axios.get(
+      `/get-paginated-documents?page=${page}&limit=${limit}&subject=${subject}&timeRange=${timeRange}&docType=${docType}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
     if (!res.data.success) {
       return NextResponse.json({

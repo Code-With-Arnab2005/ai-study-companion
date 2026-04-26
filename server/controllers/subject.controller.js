@@ -595,7 +595,34 @@ const getPaginatedDocuments = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        let { page = 1, limit = 5, subject = "ALL" } = req.query;
+        let { page = 1, limit = 5, subject = "all", timeRange = "all", docType = "all" } = req.query;
+
+        const validTimeRanges = [
+            "all",
+            "today",
+            "last 3 days",
+            "last 7 days",
+            "last 1 month",
+            "last 3 months",
+            "last 1 year"
+        ]
+        const validDocTypes = [
+            "all",
+            "pdf",
+            "word-documents",
+            "ppt",
+            "image",
+            "text-documents",
+            "other"
+        ]
+
+        // verify for filters
+        if (!validTimeRanges.includes(timeRange.toLowerCase())) {
+            return res.status(400).json({ success: false, message: "Selected Time Range is invalid" });
+        }
+        if (!validDocTypes.includes(docType.toLowerCase())) {
+            return res.status(400).json({ success: false, message: "Selected Doc Type is invalid" });
+        }
 
         page = Math.max(parseInt(page) || 1, 1);
         limit = Math.max(parseInt(limit) || 5, 5);
@@ -608,12 +635,44 @@ const getPaginatedDocuments = async (req, res) => {
             .select("*", { count: "exact" })
             .eq("user_id", user.id)
             .order("created_at", { ascending: false })
-            .range(from, to)
-        
+
         // filter by subject_id
-        if(subject !== "ALL"){
+        if (subject.toLowerCase() !== "all") {
             query = query.eq("subject_id", subject);
         }
+
+        // filter by time-range
+        const normalizedTimeRange = timeRange.toLowerCase();
+
+        if (normalizedTimeRange !== "all") {
+            const today = new Date();
+            const fromDate = new Date(today);
+
+            if (normalizedTimeRange === "last 3 days") fromDate.setDate(today.getDate() - 3);
+            else if (normalizedTimeRange === "last 7 days") fromDate.setDate(today.getDate() - 7);
+            else if (normalizedTimeRange === "last 1 month") fromDate.setMonth(today.getMonth() - 1);
+            else if (normalizedTimeRange === "last 3 months") fromDate.setMonth(today.getMonth() - 3);
+            else if (normalizedTimeRange === "last 1 year") fromDate.setFullYear(today.getFullYear() - 1);
+
+            query = query
+                .gte("created_at", fromDate.toISOString())
+                .lte("created_at", today.toISOString());
+        }
+
+        // filter by docType
+        const normalizedDocType = docType.toLowerCase();
+
+        if (normalizedDocType !== "all") {
+            if (normalizedDocType === "pdf") query = query.ilike("doc_type", "%application/pdf%");
+            else if(normalizedDocType === "word-documents") query = query.ilike("doc_type", "%document");
+            else if(normalizedDocType === "image") query = query.ilike("doc_type", "%image%");
+            else if(normalizedDocType === "ppt") query = query.or("doc_type.ilike.%powerpoint%,doc_type.ilike.%presentation");
+            else if(normalizedDocType === "text-documents") query = query.ilike("doc_type", "%text%");
+            else if(normalizedDocType === "other") query = query.ilike("doc_type", "%other%");
+        }
+
+        // filter by page and limit
+        query = query.range(from, to)
 
         const { data, count, error } = await query;
 
