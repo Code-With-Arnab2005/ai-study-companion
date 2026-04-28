@@ -2,7 +2,7 @@
 import { deleteDocument } from "@/lib/actions/subject-actions";
 import { createClient } from "@/lib/supabase/client";
 import { Document } from "@/types";
-import { File, FileText, Image, X } from "lucide-react";
+import { File, FileText, FileTypeCorner, Image, Presentation, Text, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
@@ -31,6 +31,10 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                 return <Image className="text-blue-600" size={24} />;
             case "doc":
                 return <File className="text-indigo-600" size={24} />;
+            case "text":
+                return <Text className="text-black" size={24} />;
+            case "ppt":
+                return <Presentation className="text-orange-500" size={24} />
             default:
                 return <File className="text-gray-500" size={24} />;
         }
@@ -48,7 +52,11 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
             return 'doc';
         }
 
-        return 'other';
+        if (extension?.includes("text")) return "text";
+
+        if (extension?.includes("powerpoint") || extension?.includes("presentation")) return "ppt";
+
+        return "other";
     }
     const openPreview = async () => {
         setIsLoadingPreview(true);
@@ -125,7 +133,7 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                 <div className="flex items-center gap-3 mb-2">
                     <h3 className="flex gap-2 items-center font-semibold">
                         {getFileIcon(fileType)}
-                        {document.doc_name?.slice(0, 25)} {document.doc_name?.length!> 25 && <span>...</span>}
+                        {document.doc_name?.slice(0, 25)} {document.doc_name?.length! > 25 && <span>...</span>}
                     </h3>
                 </div>
 
@@ -197,23 +205,25 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                                 />
                             )}
 
-                            {fileType === "doc" && (
-                                <div className="flex flex-col items-center justify-center h-full">
-                                    <p className="text-card-secondary-foreground mb-4">
-                                        Preview not supported for DOC files
-                                    </p>
-                                    <a
-                                        href={previewUrl as string}
-                                        target="_blank"
-                                        className="text-indigo-600 underline"
-                                    >
-                                        Download File
-                                    </a>
-                                </div>
+                            {(
+                                fileType === "doc"
+                                || fileType === "ppt"
+                            ) && (
+                                    <iframe
+                                        src={`https://view.officeapps.live.com/op/embed.aspx?src=${previewUrl}`}
+                                        className="w-full h-full"
+                                    />
+                                )}
+
+                            {fileType === "text" && (
+                                <iframe
+                                    src={`https://docs.google.com/gview?url=${previewUrl}&embedded=true`}
+                                    className="w-full h-full"
+                                />
                             )}
 
                             {fileType === "other" && (
-                                <div className="flex items-center justify-center h-full text-card-secondary-foreground">
+                                <div className="flex items-center justify-center h-full text-gray-500">
                                     Unsupported file type
                                 </div>
                             )}
