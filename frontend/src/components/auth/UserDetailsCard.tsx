@@ -4,7 +4,7 @@ import { User } from '@/types'
 
 const UserDetailsCard = ({ user }: { user: User | null }) => {
     return (
-        <div className="bg-card text-card-foreground rounded-2xl shadow-md border border-slate-200 p-8">
+        <div className="bg-card text-card-foreground rounded-2xl shadow-md border p-8">
 
             <h2 className="text-lg font-semibold mb-6">
                 Account Information

@@ -87,9 +87,9 @@ const DocumentsGrid = () => {
       return 'doc';
     }
 
-    if(extension?.includes("text")) return "text";
+    if (extension?.includes("text")) return "text";
 
-    if(extension?.includes("powerpoint") || extension?.includes("presentation")) return "ppt";
+    if (extension?.includes("powerpoint") || extension?.includes("presentation")) return "ppt";
 
     return 'other';
   }
@@ -193,7 +193,7 @@ const DocumentsGrid = () => {
   const [filterSubjectId, setFilterSubjectId] = useState<string>("ALL");
   const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
   const [filterDocType, setFilterDocType] = useState<string>("ALL");
-  
+
 
   const { data, error, isLoading } = useSWR(
     `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}&timeRange=${filterTimeRange}&docType=${filterDocType}`,
@@ -376,15 +376,15 @@ const DocumentsGrid = () => {
 
       {/* Pagination Buttons */}
       <div className="w-full flex flex-col md:flex-row justify-between items-center mt-2">
-        <Button variant="outline">
+        <Button variant="outline" className="bg-card">
           Showing {Math.min((currPage - 1) * limit + 1, totalDocuments)} - {Math.min(currPage * limit, totalDocuments)} of {totalDocuments} documents
         </Button>
 
         <div className="flex jusitfy-center items-center gap-2 mt-2 md:mt-0">
-          <Button onClick={() => setCurrPage(prev => Math.max(1, prev - 1))} variant="outline">
+          <Button className="bg-card" onClick={() => setCurrPage(prev => Math.max(1, prev - 1))} variant="outline">
             Prev
           </Button>
-          <Button onClick={() => setCurrPage(prev => Math.min(totalPages, prev + 1))} variant="outline">
+          <Button className="bg-card" onClick={() => setCurrPage(prev => Math.min(totalPages, prev + 1))} variant="outline">
             Next
           </Button>
         </div>
@@ -434,19 +434,22 @@ const DocumentsGrid = () => {
                 />
               )}
 
-              {getFileType(previewDocument!) === "doc" && (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <p className="text-gray-600 mb-4">
-                    Preview not supported for DOC files
-                  </p>
-                  <a
-                    href={previewDocument?.doc_url as string}
-                    target="_blank"
-                    className="text-indigo-600 underline"
-                  >
-                    Download File
-                  </a>
-                </div>
+              {(
+                getFileType(previewDocument!) === "doc"
+                || getFileType(previewDocument!) === "ppt"
+              ) && (
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${previewDocument?.doc_url}`}
+                    className="w-full h-full"
+                  />
+                )}
+
+              {getFileType(previewDocument!) === "text" && (
+                <iframe
+                  // src={`https://docs.google.com/gview?url=${previewDocument?.doc_url}&embedded=true`}
+                  src={`${previewDocument?.doc_url}`}
+                  className="w-full h-full"
+                />
               )}
 
               {getFileType(previewDocument!) === "other" && (

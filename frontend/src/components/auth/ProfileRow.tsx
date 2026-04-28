@@ -10,7 +10,7 @@ export function ProfileRow({
   badgeColor?: string;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+    <div className="flex items-center justify-between border-b border-bg-card pb-4">
       <div>
         <p className="text-sm text-card-foreground">{label}</p>
         <p className="text-base font-medium text-card-secondary-foreground mt-0.5">

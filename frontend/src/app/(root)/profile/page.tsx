@@ -47,7 +47,7 @@ export default function ProfilePage() {
         <div className="max-w-3xl mx-auto space-y-8">
 
           {/* PROFILE HEADER CARD */}
-          <div className="bg-card text-foreground rounded-2xl shadow-md border border-slate-200 p-8 flex flex-col sm:flex-row gap-6 items-center">
+          <div className="bg-card text-foreground rounded-2xl shadow-md border p-8 flex flex-col sm:flex-row gap-6 items-center">
 
             {/* Avatar */}
             <div className="w-24 h-24 rounded-full bg-card-secondary flex items-center justify-center
@@ -85,7 +85,7 @@ export default function ProfilePage() {
           <UserDetailsCard user={user} />
 
           {/* APP USAGE / STATS CARD */}
-          <div className="bg-card rounded-2xl shadow-md border border-slate-200 p-8">
+          <div className="bg-card rounded-2xl shadow-md border p-8">
 
             <h2 className="text-lg font-semibold text-card-foreground mb-6">
               App Activity
