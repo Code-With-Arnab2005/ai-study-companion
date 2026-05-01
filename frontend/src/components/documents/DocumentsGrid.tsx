@@ -16,21 +16,9 @@ import SubjectFilterDropdown from "./SubjectFilterDropdown";
 import TimeRangeFilterDropdown from "./TimeRangeFilterDropdown";
 import DocTypeFilterDropdown from "./DocTypeFilterDropdown";
 
-// const fetcher = async (url: string) => {
-//   const res = await fetch(url);
-//   const data = await res.json();
-
-//   if (!data.success) {
-//     toast.error(data.message ?? "Something went wrong");
-//     return null;
-//   }
-//   return data.data;
-// }
-
 const DocumentsGrid = () => {
   const limit = 5;
   const supabase = createClient();
-
 
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const fetchSubjects = async () => {
@@ -103,9 +91,15 @@ const DocumentsGrid = () => {
     }
     setOpenPreview(true);
 
-    const prevDoc = document;
-    prevDoc.doc_url = data?.signedUrl as string;
-    setPreviewDocument(prevDoc);
+    // const prevDoc = document;
+    // prevDoc.doc_url = data?.signedUrl as string;
+    setPreviewDocument(document);
+    setPreviewSignedUrl(String(data?.signedUrl));
+  }
+  const handlePreviewClose = async () => {
+    setOpenPreview(false);
+    setPreviewDocument(null);
+    setPreviewSignedUrl(null);
   }
   const getCreatedTimeofDocument = (time: string) => {
     if (!time) return;
@@ -188,6 +182,7 @@ const DocumentsGrid = () => {
   const [currPage, setCurrPage] = useState<number>(1);
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
+  const [previewSignedUrl, setPreviewSignedUrl] = useState<string | null>(null);
 
   // filters
   const [filterSubjectId, setFilterSubjectId] = useState<string>("ALL");
@@ -397,7 +392,7 @@ const DocumentsGrid = () => {
 
             {/* CLOSE */}
             <button
-              onClick={() => setOpenPreview(false)}
+              onClick={() => handlePreviewClose()}
               className="absolute top-3 right-3 text-gray-500 hover:bg-card-hover"
             >
               <X />
@@ -421,14 +416,14 @@ const DocumentsGrid = () => {
             <div className="w-full h-full border rounded-lg overflow-hidden">
               {getFileType(previewDocument!) === "pdf" && (
                 <iframe
-                  src={previewDocument?.doc_url as string}
+                  src={previewSignedUrl as string}
                   className="w-full h-full"
                 />
               )}
 
               {getFileType(previewDocument!) === "image" && (
                 <img
-                  src={previewDocument?.doc_url as string}
+                  src={previewSignedUrl as string}
                   alt={previewDocument?.doc_name as string}
                   className="w-full h-full object-contain"
                 />
@@ -439,7 +434,7 @@ const DocumentsGrid = () => {
                 || getFileType(previewDocument!) === "ppt"
               ) && (
                   <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${previewDocument?.doc_url}`}
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${previewSignedUrl}`}
                     className="w-full h-full"
                   />
                 )}
@@ -447,7 +442,7 @@ const DocumentsGrid = () => {
               {getFileType(previewDocument!) === "text" && (
                 <iframe
                   // src={`https://docs.google.com/gview?url=${previewDocument?.doc_url}&embedded=true`}
-                  src={`${previewDocument?.doc_url}`}
+                  src={previewSignedUrl as string}
                   className="w-full h-full"
                 />
               )}
