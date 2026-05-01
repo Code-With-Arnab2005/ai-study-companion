@@ -1,6 +1,6 @@
 "use client";
 
-import { options } from "@/lib/swr/helper";
+import { fetcher, options } from "@/lib/swr/helper";
 import { Document, Subject } from "@/types";
 import { Download, Eye, File, FileText, Image, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -16,16 +16,16 @@ import SubjectFilterDropdown from "./SubjectFilterDropdown";
 import TimeRangeFilterDropdown from "./TimeRangeFilterDropdown";
 import DocTypeFilterDropdown from "./DocTypeFilterDropdown";
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  const data = await res.json();
+// const fetcher = async (url: string) => {
+//   const res = await fetch(url);
+//   const data = await res.json();
 
-  if (!data.success) {
-    toast.error(data.message ?? "Something went wrong");
-    return null;
-  }
-  return data.data;
-}
+//   if (!data.success) {
+//     toast.error(data.message ?? "Something went wrong");
+//     return null;
+//   }
+//   return data.data;
+// }
 
 const DocumentsGrid = () => {
   const limit = 5;

@@ -30,7 +30,7 @@ export const getChartColors = (isDark: boolean) => {
     }
 }
 
-export default function SubjectsGraph({ data, loading }: Props) {
+export default function SubjectsGraph({ data = [], loading }: Props) {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark"
     const colors = getChartColors(isDark)

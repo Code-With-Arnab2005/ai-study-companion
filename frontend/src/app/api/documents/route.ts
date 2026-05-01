@@ -1,20 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import axios from "../../../lib/axios";
 import { NextRequest, NextResponse } from "next/server";
-
-const getToken = async () => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getSession();
-  if (error) {
-    console.error("getToken Function Error: ", error.message);
-    return null;
-  }
-  return data.session?.access_token;
-}
+import { getToken } from "@/lib/getToken";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken();
+    const token = await getToken(req);
     if (!token) {
       return NextResponse.json({
         success: false,

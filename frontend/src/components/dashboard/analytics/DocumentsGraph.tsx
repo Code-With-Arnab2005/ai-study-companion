@@ -62,7 +62,7 @@ const getFormattedData = (data: any) => {
     return chartData;
 }
 
-export default function DocumentsGraph({ data, loading }: Props) {
+export default function DocumentsGraph({ data = [], loading }: Props) {
     const chartData = getFormattedData(data);
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark"

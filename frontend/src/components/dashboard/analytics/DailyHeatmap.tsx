@@ -12,7 +12,7 @@ interface Props {
     loading: boolean;
 }
 
-const DailyHeatmap = ({ data, loading }: Props) => {
+const DailyHeatmap = ({ data = [], loading }: Props) => {
     const today = new Date();
     const lastYear = new Date();
     lastYear.setFullYear(today.getFullYear() - 1);
