@@ -1,7 +1,7 @@
 "use client";
 import SectionLoader from "../SectionLoader";
 
-const StatCard = ({ title, value, isLoading }: { title: string; value: string, isLoading: any }) => {
+const StatCard = ({ title, value = "0", isLoading }: { title: string; value: string, isLoading: any }) => {
 
   return (
     <div

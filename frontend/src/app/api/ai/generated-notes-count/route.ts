@@ -19,8 +19,7 @@ export async function GET(req: NextRequest) {
         const limit = searchParams.get("limit") || 4;
 
         const res = await axios.get(
-            `/get-filtered-generated-documents?page=${page}&limit=${limit}`,
-            // "/get-all-generated-notes",
+            "/get-all-generated-notes",
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -36,7 +35,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             success: true,
             message: res.data.message,
-            data: res.data.data,
+            data: res.data.note?.length,
         });
     } catch (err: any) {
         console.error("Documents Route Error:", err?.message || err);

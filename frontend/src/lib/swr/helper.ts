@@ -1,6 +1,17 @@
-import axios from "../axios";
+import toast from "react-hot-toast";
 
-export const fetcher = async (url: string) => await axios.get(url).then(res => res.data)
+// export const fetcher = async (url: string) => await fetch(url).then(res => res)
+
+export const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.success) {
+    toast.error(data.message ?? "Something went wrong");
+    return null;
+  }
+  return data.data;
+}
 
 export const options = {
   revalidateOnFocus: true, // Refresh when window/tab gets focus

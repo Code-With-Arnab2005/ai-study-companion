@@ -4,6 +4,7 @@ import DocumentsGraph from './analytics/DocumentsGraph';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr/helper';
 import DailyHeatmap from './analytics/DailyHeatmap';
+import toast from 'react-hot-toast';
 
 const data1 = [
   { date: "24/1/2026", uv: 6 },
@@ -42,31 +43,29 @@ const data1 = [
 //     }
 // ];
 
-// const fetcher = async (url: string) => await fetch(url).then(res => res)
-
 const Analytics = () => {
 
   const { data: documentData, error: documentError, isLoading: documentLoading } = useSWR(
-    "/get-documents-by-filtered-types",
+    "/api/analytics/documents",
     fetcher
   )
   const { data: subjectData, error: subjectError, isLoading: subjectLoading } = useSWR(
-    "/get-last-seven-days-subject-filtered-by-date",
+    "/api/analytics/subjects",
     fetcher
   )
   const { data: heatMapData, error: heatMapError, isLoading: heatmapLoading } = useSWR(
-    "/get-daily-heatmap-data",
+    "/api/analytics/heatmap-data",
     fetcher
   )
 
   return (
     <div className='w-full flex flex-col gap-10'>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SubjectsGraph data={subjectData?.data ?? []} loading={subjectLoading} />
-        <DocumentsGraph data={documentData?.data ?? []} loading={documentLoading} />
+        <SubjectsGraph data={subjectData} loading={subjectLoading} />
+        <DocumentsGraph data={documentData} loading={documentLoading} />
       </div>
       <div>
-        <DailyHeatmap data={heatMapData?.data ?? []} loading={heatmapLoading} />
+        <DailyHeatmap data={heatMapData} loading={heatmapLoading} />
       </div>
     </div>
   )

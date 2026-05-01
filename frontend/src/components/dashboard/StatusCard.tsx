@@ -1,74 +1,36 @@
 "use client";
-import { useEffect, useState } from 'react';
 import StatCard from "@/components/subject/StatCard";
-import { fetchNumberOfPDFdocs, fetchTotalNumberOfDocuments, fetchTotalNumberOfSubjects } from '@/lib/actions/subject-actions';
-import toast from 'react-hot-toast';
-import { fetcher } from '@/lib/swr/helper';
+import { fetcher, options } from '@/lib/swr/helper';
 import useSWR from 'swr';
 
 const StatusCard = () => {
-    const [totalNoOfSubjects, setTotalNoOfSubjects] = useState<string>("");
-    const [totalNoOfDocs, setTotalNoOfDocs] = useState<string>("");
-    const [noOfPdfDocs, setNoOfPdfDocs] = useState<string>("");
-
-    const [isTotalDocsLoading, setIsTotalDocsLoading] = useState(true);
-    const [isTotalSubjectLoading, setIsTotalSubjectLoading] = useState(true);
-    const [isTotalPdfLoading, setIsTotalPdfLoading] = useState(true);
-    
-    const getTotalSubjects = async () => {
-        const res = await fetchTotalNumberOfSubjects();
-        if(!res?.data){
-            toast.error("Something went wrong");
-            return;
-        }
-        if(!res.data.success){
-            toast.error(res.data.message);
-            return;
-        }
-        setTotalNoOfSubjects(res.data.count);
-        setIsTotalSubjectLoading(false);
-    }
-    const getTotalDocuments = async () => {
-        const res = await fetchTotalNumberOfDocuments();
-        if(!res?.data){
-            toast.error("Something went wrong");
-            return;
-        }
-        if(!res.data.success){
-            toast.error(res.data.message);
-            return;
-        }
-        setTotalNoOfDocs(res.data.count);
-        setIsTotalDocsLoading(false);
-    }
-    const getTotalPdfDocuments = async () => {
-        const res = await fetchNumberOfPDFdocs();
-        if(!res?.data){
-            toast.error("Something went wrong");
-            return;
-        }
-        if(!res.data.success){
-            toast.error(res.data.message);
-            return;
-        }
-        setNoOfPdfDocs(res.data.count);
-        setIsTotalPdfLoading(false);
-    }
-
-    const { data: generatedNotes, error: notesError, isLoading: notesLoading } = useSWR("/get-all-generated-notes", fetcher);
-
-    useEffect(() => {
-        getTotalDocuments();
-        getTotalSubjects();
-        getTotalPdfDocuments();
-    }, [])
+    const { data: generatedNotes, error: notesError, isLoading: notesLoading } = useSWR(
+        "/api/ai/generated-notes-count",
+        fetcher,
+        options
+    );
+    const { data: totalNoOfDocs, error: docsError, isLoading: isTotalDocsLoading } = useSWR(
+        "/api/documents/total-documents-count",
+        fetcher,
+        options
+    )
+    const { data: totalNoOfSubjects, error: subjectError, isLoading: isTotalSubjectLoading } = useSWR(
+        "/api/subjects/total-subjects-count",
+        fetcher,
+        options
+    )
+    const { data: noOfPdfDocs, error: pdfError, isLoading: isTotalPdfLoading } = useSWR(
+        "/api/documents/pdf-docs-count",
+        fetcher,
+        options
+    )
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard title="Total Subjects" value={totalNoOfSubjects} isLoading={isTotalSubjectLoading} />
             <StatCard title="Total Documents" value={totalNoOfDocs} isLoading={isTotalDocsLoading} />
             <StatCard title="PDF Notes" value={noOfPdfDocs} isLoading={isTotalPdfLoading} />
-            <StatCard title="AI Sessions" value={generatedNotes?.note?.length} isLoading={notesLoading}/>
+            <StatCard title="AI Sessions" value={generatedNotes} isLoading={notesLoading} />
         </div>
     )
 }
