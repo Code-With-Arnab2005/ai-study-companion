@@ -5,7 +5,7 @@ import useSWR from 'swr';
 
 const StatusCard = () => {
     const { data: generatedNotes, error: notesError, isLoading: notesLoading } = useSWR(
-        "/api/ai/generated-notes",
+        "/api/ai/generated-notes-count",
         fetcher,
         options
     );
@@ -30,7 +30,7 @@ const StatusCard = () => {
             <StatCard title="Total Subjects" value={totalNoOfSubjects} isLoading={isTotalSubjectLoading} />
             <StatCard title="Total Documents" value={totalNoOfDocs} isLoading={isTotalDocsLoading} />
             <StatCard title="PDF Notes" value={noOfPdfDocs} isLoading={isTotalPdfLoading} />
-            <StatCard title="AI Sessions" value={generatedNotes?.length} isLoading={notesLoading} />
+            <StatCard title="AI Sessions" value={generatedNotes} isLoading={notesLoading} />
         </div>
     )
 }
