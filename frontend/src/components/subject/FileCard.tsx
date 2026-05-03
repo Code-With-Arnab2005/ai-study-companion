@@ -6,6 +6,7 @@ import { File, FileText, FileTypeCorner, Image, Presentation, Text, X } from "lu
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
+import { ConfirmDelete } from "../documents/confirmDelete";
 
 
 const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Document, fetchDocuments: any, fetchSubject: any }) => {
@@ -145,13 +146,15 @@ const FileCard = ({ document, fetchDocuments, fetchSubject }: { document: Docume
                     Created At: {createdTimeOfDocument}
                 </p>
 
+                {/* Actions */}
                 <div className="flex gap-4 text-sm">
-                    <button
-                        disabled={isDeleting}
-                        onClick={handleDelteFile}
-                        className="bg-red-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-red-600 hover:cursor-pointer">
-                        {isDeleting ? <Spinner /> : "Delete"}
-                    </button>
+                    <ConfirmDelete document={document} fetchDocuments={fetchDocuments}>
+                        <button
+                            className="bg-red-500 text-white font-bold px-2 py-1 rounded-lg hover:bg-red-600 hover:cursor-pointer">
+                            Delete
+                        </button>
+                    </ConfirmDelete>
+
                     <button
                         disabled={isLoadingPreview}
                         onClick={openPreview}

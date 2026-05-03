@@ -53,7 +53,7 @@ export function AppSidebar() {
             group: "Profile and Settings",
             items: [
                 { title: "Profile", href: "/profile", icon: User2 },
-                { title: "Settings", href: "#", icon: Settings }
+                { title: "Settings", href: "/settings", icon: Settings }
             ]
         },
         {

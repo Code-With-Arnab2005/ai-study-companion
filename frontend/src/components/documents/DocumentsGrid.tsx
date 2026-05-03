@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import SubjectFilterDropdown from "./SubjectFilterDropdown";
 import TimeRangeFilterDropdown from "./TimeRangeFilterDropdown";
 import DocTypeFilterDropdown from "./DocTypeFilterDropdown";
+import { ConfirmDelete } from "./confirmDelete";
 
 const DocumentsGrid = () => {
   const limit = 5;
@@ -190,7 +191,7 @@ const DocumentsGrid = () => {
   const [filterDocType, setFilterDocType] = useState<string>("ALL");
 
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}&timeRange=${filterTimeRange}&docType=${filterDocType}`,
     fetcher,
     options
@@ -313,11 +314,14 @@ const DocumentsGrid = () => {
                     <Download size={20} />
                   </button>
 
-                  <button
-                    onClick={() => handleDelteFile(doc)}
-                    className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
-                    <Trash2 size={16} />
-                  </button>
+                  <ConfirmDelete document={doc} fetchDocuments={mutate}>
+                    <button
+                      // onClick={() => handleDelteFile(doc)}
+                      className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
+                      <Trash2 size={16} />
+                    </button>
+                  </ConfirmDelete>
+
                 </div>
                 {/* Mobile View */}
                 <div className="md:hidden ml-10">
