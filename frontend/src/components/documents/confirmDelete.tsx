@@ -48,7 +48,7 @@ export function ConfirmDelete({ document, fetchDocuments, children }:
                 return;
             }
             await fetchDocuments();
-            toast.success(`Subject ${document.doc_name} deleted successfully`);
+            toast.success(`Document ${document.doc_name} deleted successfully`);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
