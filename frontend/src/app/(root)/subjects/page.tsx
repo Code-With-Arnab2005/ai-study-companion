@@ -5,37 +5,30 @@ import AddSubjectModal from '@/components/subject/AddSubjectModal';
 import SubjectHeader from '@/components/subject/SubjectHeader';
 import SubjectShowingGrid from '@/components/subject/SubjectShowingGrid';
 import { fetchAllSubjects } from '@/lib/actions/subject-actions';
+import { fetcher, options } from '@/lib/swr/helper';
 import { Subject } from '@/types';
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
+import useSWR from 'swr';
 
 const page = () => {
     const [subjectName, setSubjectName] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [loading, setLoading] = useState(true);
 
     const handleModalClose = () => {
         setIsModalOpen(false)
         setSubjectName("");
     }
 
-    const fetchSubjects = async () => {
-        const res = await fetchAllSubjects();
-        if (!res?.data) {
-            toast.error("Something went wrong, please try again later");
-        } else if (!res?.data.success) {
-            toast.error(res.data.message);
-        } else {
-            const data = res?.data.data;
-            setSubjects(data)
-        }
-        setLoading(false);
-    }
+    const { data: subjects, error, isLoading: loading, mutate } = useSWR(
+        "/api/subjects",
+        fetcher,
+        options
+    )
 
-    useEffect(() => {
-        fetchSubjects();
-    }, [])
+    if(error){
+        toast.error(error);
+    }
 
     return (
         <PageWrapper>
@@ -46,11 +39,11 @@ const page = () => {
             </div>
 
             {/* Subjects Grid */}
-            <SubjectShowingGrid subjects={subjects} loading={loading} fetchSubjects={fetchSubjects} />
+            <SubjectShowingGrid subjects={subjects} loading={loading} mutate={mutate} />
 
             {/* Modal */}
             <AddSubjectModal
-                fetchSubjects={fetchSubjects}
+                mutate={mutate}
                 setSubjectName={setSubjectName}
                 subjectName={subjectName}
                 isOpen={isModalOpen}

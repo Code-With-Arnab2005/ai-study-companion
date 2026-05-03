@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Spinner } from "../ui/spinner";
 
 type Props = {
-  fetchSubjects: any;
+  mutate: any;
   setSubjectName: any;
   subjectName: any;
   isOpen: boolean;
@@ -14,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, setIsModalOpen, onClose }: Props) => {
+const AddSubjectModal = ({ mutate, setSubjectName, subjectName, isOpen, setIsModalOpen, onClose }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleAddSubject = async () => {
@@ -41,7 +41,7 @@ const AddSubjectModal = ({ fetchSubjects, setSubjectName, subjectName, isOpen, s
 
       setIsModalOpen(false);
       setSubjectName("");
-      fetchSubjects();
+      await mutate();
     } catch (error: any) {
       toast.error(error.message ?? error ?? "Something went wrong, please try again later");
     } finally {

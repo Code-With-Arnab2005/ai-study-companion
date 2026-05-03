@@ -11,7 +11,7 @@ import { AlertDialog, AlertDialogTrigger } from '../ui/alert-dialog';
 import { ConfirmDeleteAlert } from './ConfirmDeleteAlert';
 import { Button } from '../ui/button';
 
-const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Subject[], loading: boolean, fetchSubjects: Function }) => {
+const SubjectShowingGrid = ({ subjects = [], loading, mutate }: { subjects: Subject[], loading: boolean, mutate: any }) => {
 
     const [subjectToTags, setSubjectToTags] = useState<Map<string, string[]>>(new Map());
 
@@ -49,10 +49,8 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
         setSubjectToTags(newMap);
     }
 
-
-
     useEffect(() => {
-        if (subjects.length === 0) return;
+        if (subjects?.length === 0) return;
         setSubjectTagsBySubjectId();
     }, [subjects])
 
@@ -145,7 +143,8 @@ const SubjectShowingGrid = ({ subjects, loading, fetchSubjects }: { subjects: Su
                         </div>
 
                         {/* Delete */}
-                        <ConfirmDeleteAlert subject={subject} fetchSubjects={fetchSubjects} />
+                        {/* <ConfirmDeleteAlert subject={subject} fetchSubjects={fetchSubjects} /> */}
+                        <ConfirmDeleteAlert subject={subject} mutate={mutate} />
                     </div>
 
                 </div>

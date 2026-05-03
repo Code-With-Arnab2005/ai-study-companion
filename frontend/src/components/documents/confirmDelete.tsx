@@ -11,28 +11,34 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button";
-import { Subject } from "@/types";
+
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
 import { useState } from "react";
-import { deleteSubject } from '@/lib/actions/subject-actions';
+import { deleteDocument, deleteSubject } from '@/lib/actions/subject-actions';
+import { Document } from "@/types";
 
-export function ConfirmDeleteAlert({ subject, mutate }: { subject: Subject, mutate: any }) {
+export function ConfirmDelete({ document, fetchDocuments, children }:
+        {
+            document: Document,
+            fetchDocuments: Function,
+            children: React.ReactNode
+        }) {
     const [deleteLoading, setDeleteLoading] = useState<Map<string, boolean>>(new Map()); //subject-id -> deleteLoading
-    
-    const handleDelete = async (subject: Subject) => {
-        const subject_id = subject.id;
-        if (!subject_id) {
-            toast.error("Subject id not found");
+
+    const handleDelete = async (document: Document) => {
+        const document_id = document.id;
+        if (!document_id) {
+            toast.error("Document id not found");
             return;
         }
         setDeleteLoading(prev => {
             const newMap = new Map(prev);
-            newMap.set(subject_id, true);
+            newMap.set(document_id, true);
             return newMap;
         })
         try {
-            const res = await deleteSubject(subject_id);
+            const res = await deleteDocument(document_id);
             if (!res?.data) {
                 toast.error("Something went wrong");
                 return;
@@ -41,40 +47,36 @@ export function ConfirmDeleteAlert({ subject, mutate }: { subject: Subject, muta
                 toast.error(res.data.message);
                 return;
             }
-            await mutate();
-            toast.success(`Subject ${subject.subject_name} deleted successfully`);
+            await fetchDocuments();
+            toast.success(`Subject ${document.doc_name} deleted successfully`);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
             setDeleteLoading(prev => {
                 const newMap = new Map(prev);
-                newMap.set(subject_id, false);
+                newMap.set(document_id, false);
                 return newMap;
             });
         }
     }
 
-    if (deleteLoading.get(subject.id!)) return <Spinner />
+    if (deleteLoading.get(document.id!)) return <Spinner />
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <button
-                    className="hover:cursor-pointer text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
-                >
-                    Delete
-                </button>
+                {children}
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-card">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Are you sure you want to delete {document.doc_name}</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete your
-                        Subject.
+                        Docuemnt.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleDelete(subject)}>Delete</AlertDialogAction>
+                    <AlertDialogAction onClick={() => handleDelete(document)}>Delete</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
