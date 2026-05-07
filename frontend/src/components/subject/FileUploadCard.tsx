@@ -44,6 +44,25 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
             return;
         }
 
+        // check if file with same docName exists or not
+        const { data: duplicateDoc, error: duplicateDocError } = await supabase
+            .from("documents")
+            .select('id')
+            .eq("user_id", data.user.id)
+            .eq("doc_name", docName)
+            .maybeSingle()
+        
+        if(duplicateDocError){
+            toast.error(duplicateDocError.message ?? "Something went wrong");
+            setLoading(false);
+            return;
+        }
+        if(duplicateDoc?.id){
+            toast.error(`File already exists with doc_name: ${docName}`);
+            setLoading(false);
+            return;
+        }
+
         //upload the file to supbase bucket
         const {data: uploadData, error: uploadError} = await supabase.storage.from('documents').upload(`${Date.now()}-${data.user.id}-${file.name}`, file);
         if(uploadError){
@@ -96,7 +115,10 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
                     type="file"
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png"
                     className="border border-gray-300 rounded-lg px-4 py-2"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => {
+                        setFile(e.target.files?.[0] || null)
+                        setDocName(e.target.files?.[0].name?.split('.')[0] || "")
+                    }}
                 />
 
                 {/* Upload Button */}
