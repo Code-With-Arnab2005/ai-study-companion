@@ -78,9 +78,6 @@ const SubjectPage = () => {
 
   return (
     <PageWrapper>
-      <main className="">
-        {/* <section className="max-w-6xl mx-auto px-6 py-9"> */}
-
           <Link href={"/subjects"}>
             <div className="w-full">
               <Button
@@ -125,9 +122,6 @@ const SubjectPage = () => {
               )}
             </div>
           </div>
-
-        {/* </section> */}
-      </main>
     </PageWrapper>
   );
 };
