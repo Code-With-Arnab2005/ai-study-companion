@@ -123,6 +123,7 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
 
                 {/* Upload Button */}
                 <button
+                    disabled={loading}
                     onClick={(e) => handleUpload(e)}
                     className="bg-indigo-700 text-white rounded-lg px-4 py-2
                          hover:bg-indigo-800 transition font-medium"

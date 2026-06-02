@@ -5,7 +5,7 @@ const RecentDoc = ({ doc_type, name }: { doc_type: string, name: string }) => {
         <div className="h-10 w-10 rounded-lg bg-image-bg flex items-center justify-center text-image-text font-bold">
           {doc_type}
         </div>
-        <p className="text-sm text-card-foreground truncate">{name}</p>
+        <p className="text-sm text-card-foreground truncate">{name.slice(0, 30)} {name.length >= 30 && <span>...</span>}</p>
       </div>
     </div>
   );

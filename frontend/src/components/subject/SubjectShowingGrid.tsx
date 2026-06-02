@@ -77,7 +77,7 @@ const SubjectShowingGrid = ({ subjects = [], loading, mutate }: { subjects: Subj
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
                             <h3 className="text-lg font-semibold group-hover:text-indigo-600 transition">
-                                {subject.subject_name?.slice(0, 30)} {subject.subject_name?.length! > 20 && <span>...</span>}
+                                {subject.subject_name?.slice(0, 30)} {subject.subject_name?.length! >= 30 && <span>...</span>}
                             </h3>
                             <ArrowBigRight
                                 className="text-slate-400 group-hover:text-indigo-500 transition"

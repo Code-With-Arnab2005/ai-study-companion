@@ -1,5 +1,3 @@
-import React from 'react';
-import { Subject } from '@/types';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface Props {
