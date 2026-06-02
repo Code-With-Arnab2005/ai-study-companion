@@ -55,7 +55,7 @@ const AddSubjectModal = ({ mutate, setSubjectName, subjectName, isOpen, setIsMod
     <>
       {/* Background Blur */}
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+        className="fixed h-full inset-0 bg-black/40 backdrop-blur-sm z-400"
         onClick={onClose}
       />
 

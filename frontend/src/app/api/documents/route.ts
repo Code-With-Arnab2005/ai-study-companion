@@ -19,9 +19,10 @@ export async function GET(req: NextRequest) {
     const subject = searchParams.get("subject") || "ALL";
     const timeRange = searchParams.get("timeRange") || "ALL";
     const docType = searchParams.get("docType") || "ALL";
+    const searchFilter = searchParams.get("searchFilter") || "";
 
     const res = await axios.get(
-      `/get-paginated-documents?page=${page}&limit=${limit}&subject=${subject}&timeRange=${timeRange}&docType=${docType}`,
+      `/get-paginated-documents?page=${page}&limit=${limit}&subject=${subject}&timeRange=${timeRange}&docType=${docType}&searchFilter=${searchFilter}`,
       {
         headers: {
           Authorization: `Bearer ${token}`

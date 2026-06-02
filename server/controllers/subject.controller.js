@@ -595,7 +595,7 @@ const getPaginatedDocuments = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        let { page = 1, limit = 5, subject = "all", timeRange = "all", docType = "all" } = req.query;
+        let { page = 1, limit = 5, subject = "all", timeRange = "all", docType = "all", searchFilter = "" } = req.query;
 
         const validTimeRanges = [
             "all",
@@ -669,6 +669,12 @@ const getPaginatedDocuments = async (req, res) => {
             else if(normalizedDocType === "ppt") query = query.or("doc_type.ilike.%powerpoint%,doc_type.ilike.%presentation");
             else if(normalizedDocType === "text-documents") query = query.ilike("doc_type", "%text%");
             else if(normalizedDocType === "other") query = query.ilike("doc_type", "%other%");
+        }
+
+        // filter by Search Filter (docuemnt name)
+        if(searchFilter?.length > 0){
+            searchFilter = searchFilter.trim();
+            query = query.ilike("doc_name", `%${searchFilter}%`)
         }
 
         // filter by page and limit

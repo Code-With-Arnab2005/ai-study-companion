@@ -16,6 +16,7 @@ import SubjectFilterDropdown from "./SubjectFilterDropdown";
 import TimeRangeFilterDropdown from "./TimeRangeFilterDropdown";
 import DocTypeFilterDropdown from "./DocTypeFilterDropdown";
 import { ConfirmDelete } from "./confirmDelete";
+import SearchByDocumentName from "./SearchByDocumentName";
 
 const DocumentsGrid = () => {
   const limit = 5;
@@ -189,10 +190,11 @@ const DocumentsGrid = () => {
   const [filterSubjectId, setFilterSubjectId] = useState<string>("ALL");
   const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
   const [filterDocType, setFilterDocType] = useState<string>("ALL");
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
 
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}&timeRange=${filterTimeRange}&docType=${filterDocType}`,
+    `/api/documents?page=${currPage}&limit=${limit}&subject=${filterSubjectId}&timeRange=${filterTimeRange}&docType=${filterDocType}&searchFilter=${searchFilter}`,
     fetcher,
     options
   );
@@ -224,6 +226,12 @@ const DocumentsGrid = () => {
         {/* Doc Type Filter Options */}
         <DocTypeFilterDropdown
           setFilterDocType={setFilterDocType}
+          setCurrPage={setCurrPage}
+        />
+
+        {/* Search By Document */}
+        <SearchByDocumentName
+          setSearchFilter={setSearchFilter}
           setCurrPage={setCurrPage}
         />
 
@@ -267,7 +275,7 @@ const DocumentsGrid = () => {
 
                   <div>
                     <p className="text-[8px] md:text-sm font-medium">
-                      {doc.doc_name}
+                      {doc.doc_name?.slice(0, 30)} {(doc.doc_name?.length ?? 0) >= 30 && <span>...</span>}
                     </p>
                     <p className="text-[6px] md:text-xs text-card-secondary-foreground">
                       {getFilesize(doc.doc_size as number)}
@@ -283,7 +291,7 @@ const DocumentsGrid = () => {
                 {/* Subject */}
                 <span className="hidden md:block text-sm text-blue-600 underline">
                   <Link href={`/subjects/${doc.subject_id}`}>
-                    {doc.subject_name ?? "other"}
+                    {doc.subject_name?.slice(0, 20) ?? "other"} {(doc.subject_name?.length ?? 0) >= 20 && <span>...</span>}
                   </Link>
                 </span>
 
