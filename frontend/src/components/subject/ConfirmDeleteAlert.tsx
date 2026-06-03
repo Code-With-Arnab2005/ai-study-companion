@@ -19,7 +19,7 @@ import { deleteSubject } from '@/lib/actions/subject-actions';
 
 export function ConfirmDeleteAlert({ subject, mutate }: { subject: Subject, mutate: any }) {
     const [deleteLoading, setDeleteLoading] = useState<Map<string, boolean>>(new Map()); //subject-id -> deleteLoading
-    
+
     const handleDelete = async (subject: Subject) => {
         const subject_id = subject.id;
         if (!subject_id) {
@@ -35,10 +35,20 @@ export function ConfirmDeleteAlert({ subject, mutate }: { subject: Subject, muta
             const res = await deleteSubject(subject_id);
             if (!res?.data) {
                 toast.error("Something went wrong");
+                setDeleteLoading(prev => {
+                    const newMap = new Map(prev);
+                    newMap.set(subject_id, false);
+                    return newMap;
+                });
                 return;
             }
             if (!res.data.success) {
                 toast.error(res.data.message);
+                setDeleteLoading(prev => {
+                    const newMap = new Map(prev);
+                    newMap.set(subject_id, false);
+                    return newMap;
+                });
                 return;
             }
             await mutate();

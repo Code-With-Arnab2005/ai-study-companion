@@ -102,6 +102,7 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* File Name */}
                 <input
+                    disabled={loading}
                     type="text"
                     placeholder="Enter file name (e.g. Unit 1 Notes)"
                     className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -111,6 +112,7 @@ const FileUploadCard = ({ fetchSubject, fetchDocuments }: { fetchSubject: any, f
 
                 {/* File Input */}
                 <input
+                    disabled={loading}
                     ref={fileInputRef}
                     type="file"
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png"

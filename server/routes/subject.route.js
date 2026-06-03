@@ -1,6 +1,7 @@
 import express from 'express';
 import {
     addDocument,
+    deleteAllDocumentsBySubjectId,
     deleteDocument,
     deleteSubject,
     fetchDocumentsBySubjectId,
@@ -38,5 +39,6 @@ router.get("/get-last-seven-days-subject-filtered-by-date", getNoOfSubjectsForLa
 router.get("/get-documents-by-filtered-types", getAllDocsFilteredByTypes);
 router.get("/get-daily-heatmap-data", getDailyHeatmapData);
 router.get("/get-paginated-documents", getPaginatedDocuments);
+router.delete("/delete-documents-by-subject-id", deleteAllDocumentsBySubjectId);
 
 export default router;

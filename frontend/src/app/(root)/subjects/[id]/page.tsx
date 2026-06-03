@@ -1,6 +1,7 @@
 "use client";
 import Loader from "@/components/Loader";
 import PageWrapper from "@/components/PageWrapper";
+import ConfirmAllDocsDelete from "@/components/subject/ConfirmAllDocsDelete";
 import FileCard from "@/components/subject/FileCard";
 import FileUploadCard from "@/components/subject/FileUploadCard";
 import { Button } from "@/components/ui/button";
@@ -78,14 +79,24 @@ const SubjectPage = () => {
 
   return (
     <PageWrapper>
-      <Link href={"/subjects"}>
-        <div className="w-full">
-          <Button
-            className="mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
-            <ArrowBigLeft fill="white" />All Subjects
-          </Button>
-        </div>
-      </Link>
+      <div className="flex justify-between items-center">
+        <Link href={"/subjects"}>
+          <div className="w-full">
+            <Button
+              className="mb-5 bg-indigo-700 text-white rounded-lg px-10 py-3 hover:bg-indigo-800 transition font-medium hover:cursor-pointer">
+              <ArrowBigLeft fill="white" />All Subjects
+            </Button>
+          </div>
+        </Link>
+
+        {/* Delete All Documents of this Subject */}
+        <ConfirmAllDocsDelete
+          fetchSubject={fetchSubject}
+          fetchDocuments={fetchDocuments}
+          subject_id={String(subject_id)}
+          document_length={documents.length ?? 0}
+        />
+      </div>
 
       {/* Subject Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
