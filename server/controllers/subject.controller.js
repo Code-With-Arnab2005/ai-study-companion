@@ -721,6 +721,34 @@ const getPaginatedDocuments = async (req, res) => {
     }
 }
 
+const deleteAllDocumentsBySubjectId = async (req, res) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User is unauthorized" });
+        }
+
+        const { subject_id = "" } = req.query;
+        if(!subject_id || subject_id.length===0){
+            return res.status(400).json({ success: false, message: "Subject Id not found" });
+        }
+
+        const { error } = await supabase
+        .from("documents")
+        .delete()
+        .eq("subject_id", subject_id)
+
+        if(error){
+            return res.status(500).json({ success: false, message: error.message ?? "Something went wrong" });
+        }
+
+        return res.status(200).json({ success: true, message: "Documents are deleted" });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export {
     insertSubject,
     deleteSubject,
@@ -738,5 +766,6 @@ export {
     getNoOfSubjectsForLastSevenDays,
     getAllDocsFilteredByTypes,
     getDailyHeatmapData,
-    getPaginatedDocuments
+    getPaginatedDocuments,
+    deleteAllDocumentsBySubjectId
 }
