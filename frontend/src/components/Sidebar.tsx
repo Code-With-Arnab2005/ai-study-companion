@@ -10,7 +10,8 @@ import {
     Notebook,
     LucideIcon,
     ChevronRight,
-    Brain
+    Brain,
+    Link2
 } from "lucide-react"
 
 import {
@@ -45,7 +46,8 @@ export function AppSidebar() {
         { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { title: "Subjects", href: "/subjects", icon: BookOpen },
         { title: "AI Sessions", href: "/ai-sessions", icon: Brain },
-        { title: "Documents", href: "/documents", icon: Notebook }
+        { title: "Documents", href: "/documents", icon: Notebook },
+        { title: "Links", href: "/links", icon: Link2 }
     ]
 
     const GroupMenuItems: GroupmenuItemsType[] = [
