@@ -8,7 +8,7 @@ interface Props {
 const SearchByDocumentName = ({ setCurrPage, setSearchFilter }: Props) => {
     return (
         <div className='flex flex-col gap-2 items-start'>
-            <div className='font-semibold text-foreground'>Search By Docuemnt Name</div>
+            <div className='font-semibold text-foreground'>Search By Document Name</div>
             <Input
                 onChange={(e) => {
                     setCurrPage(1)

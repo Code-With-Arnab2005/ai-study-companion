@@ -59,3 +59,13 @@ export type AIGeneratedNotes = {
     level: string | null,
     notes: string | null,
 }
+
+export type Link = {
+    id: string | null,
+    user_id: string | null,
+    url: string | null,
+    link_name: string | null,
+    description: string | null,
+    is_liked: boolean,
+    created_at: string | null
+}
