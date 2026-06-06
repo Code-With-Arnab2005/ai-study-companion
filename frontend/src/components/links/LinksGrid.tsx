@@ -2,13 +2,13 @@
 
 import { fetcher, options } from "@/lib/swr/helper";
 import { Link, Document, Subject } from "@/types";
-import { Download, Eye, File, FileText, Image, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
+import { Download, Eye, File, FileText, Image, Link, Link2, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
 import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/client";
-// import Link from "next/link";
+import NextLink from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import SectionLoader from "../SectionLoader";
 // import { ConfirmDelete } from "./confirmDelete";
@@ -16,6 +16,30 @@ import SectionLoader from "../SectionLoader";
 const LinksGrid = () => {
     const limit = 5;
     const [currPage, setCurrPage] = useState<number>(1);
+
+    const getFileIcon = () => {
+        return <Link2 className="text-red-600" size={24} />;
+    }
+    const getCreatedTimeofDocument = (time: string) => {
+        if (!time) return;
+
+        const ist = new Date(time).toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            hour12: true,
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
+        return ist;
+    }
+    const getCreatedTimeofDocumentForMobile = (time: string) => {
+        // 2026-04-25T16:23:26.143423+00:00
+        if (!time) return;
+        return time.slice(0, 10);
+    }
 
     // filters
     const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
@@ -47,12 +71,13 @@ const LinksGrid = () => {
 
             <div className="bg-card border text-card-foreground rounded-2xl overflow-hidden min-h-[40vh]">
                 {/* Table Header */}
-                <div className="grid grid-cols-6 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
-                    <span className="col-span-2">Link Name</span>
-                    <span>URL</span>
-                    <span>Description</span>
+                {/* <div className="grid grid-cols-[1.5fr_2fr_2fr_1fr_0.5fr] gap-4 px-6 py-4 text-[12px] md:text-sm font-medium border-b"> */}
+                <div className="grid grid-cols-7 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
+                    <span>Link Name</span>
+                    <span className="col-span-2">URL</span>
+                    <span className="col-span-2">Description</span>
                     <span>Created On</span>
-                    <span className="text-right">Actions</span>
+                    <span className="text-right mr-3">Actions</span>
                 </div>
 
                 {/* Rows */}
@@ -72,10 +97,13 @@ const LinksGrid = () => {
                         return (
                             <div
                                 key={link.id}
-                                className="grid grid-cols-6 items-center px-6 py-4 hover:bg-card-hover transition"
+                                className="grid grid-cols-7 px-6 py-4 text-[12px] md:text-sm font-medium border-b"
                             >
                                 {/* Link Name */}
-                                <div className="col-span-2 flex items-center gap-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="hidden md:block p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                        {getFileIcon()}
+                                    </div>
                                     <div>
                                         <p className="text-[8px] md:text-sm font-medium">
                                             {link.link_name?.slice(0, 30)} {(link.link_name?.length ?? 0) >= 30 && <span>...</span>}
@@ -84,30 +112,37 @@ const LinksGrid = () => {
                                 </div>
 
                                 {/* URL */}
-                                <span className="text-[8px] md:text-sm">
-                                    {link.url?.slice(0, 30)} {(link.url?.length ?? 0) >= 30 && <span>...</span>}
+                                <span className="col-span-2 text-[8px] md:text-sm text-blue-800 underline">
+                                    <NextLink target="blank" href={String(link.url)}>
+                                        {link.url?.slice(0, 30)} {(link.url?.length ?? 0) >= 30 && <span>...</span>}
+                                    </NextLink>
                                 </span>
 
                                 {/* Description */}
-                                <span className="text-[8px] md:text-sm">
-                                    {link.description}
+                                <span className={`col-span-2 text-[8px] md:text-sm ${link.description?.length === 0 ? "text-gray-500" : ""}`}>
+                                    {link.description?.length === 0 && "No Description Added"}
+                                    {link.description?.slice(0, 30)} {(link.description?.length ?? 0) >= 30 && <span>...</span>}
                                 </span>
 
                                 {/* Created */}
                                 {/* Desktop view */}
                                 <span className="hidden md:block text-sm text-card-secondary-foreground">
-                                    {/* {getCreatedTimeofDocument(doc.created_at as string)} */}
-                                    {link.created_at}
+                                    {getCreatedTimeofDocument(link.created_at as string)}
                                 </span>
                                 {/* Mobile View */}
                                 <span className="block md:hidden ml-2 text-[7px] text-card-secondary-foreground">
-                                    {/* {getCreatedTimeofDocumentForMobile(doc.created_at as string)} */}
-                                    {link.created_at}
+                                    {getCreatedTimeofDocumentForMobile(link.created_at as string)}
                                 </span>
 
                                 {/* Actions */}
                                 {/* Desktop View */}
                                 <div className="hidden md:flex justify-end items-center gap-1">
+                                    <button
+                                        // onClick={() => handleOpenPreview(doc)}
+                                        className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
+                                    >
+                                        <Eye size={20} />
+                                    </button>
                                     {/* <ConfirmDelete document={doc} fetchDocuments={mutate}> */}
                                     <button
                                         // onClick={() => handleDelteFile(doc)}
@@ -115,6 +150,7 @@ const LinksGrid = () => {
                                         <Trash2 size={16} />
                                     </button>
                                     {/* </ConfirmDelete> */}
+                                    {/* Open Preview */}
 
                                 </div>
                                 {/* Mobile View */}
