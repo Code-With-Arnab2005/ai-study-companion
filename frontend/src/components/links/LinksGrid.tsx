@@ -72,8 +72,8 @@ const LinksGrid = () => {
             <div className="bg-card border text-card-foreground rounded-2xl overflow-hidden min-h-[40vh]">
                 {/* Table Header */}
                 {/* <div className="grid grid-cols-[1.5fr_2fr_2fr_1fr_0.5fr] gap-4 px-6 py-4 text-[12px] md:text-sm font-medium border-b"> */}
-                <div className="grid grid-cols-7 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
-                    <span>Link Name</span>
+                <div className="grid grid-cols-8 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
+                    <span className="col-span-2">Link Name</span>
                     <span className="col-span-2">URL</span>
                     <span className="col-span-2">Description</span>
                     <span>Created On</span>
@@ -97,10 +97,10 @@ const LinksGrid = () => {
                         return (
                             <div
                                 key={link.id}
-                                className="grid grid-cols-7 px-6 py-4 text-[12px] md:text-sm font-medium border-b"
+                                className="grid grid-cols-8 px-6 py-4 text-[12px] md:text-sm font-medium border-b"
                             >
                                 {/* Link Name */}
-                                <div className="flex items-center gap-3">
+                                <div className="col-span-2 flex items-center gap-3">
                                     <div className="hidden md:block p-2 rounded-lg bg-indigo-50 text-indigo-600">
                                         {getFileIcon()}
                                     </div>
