@@ -2,7 +2,7 @@
 
 import { fetcher, options } from "@/lib/swr/helper";
 import { Link, Document, Subject } from "@/types";
-import { Download, Eye, File, FileText, Image, Link, Link2, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
+import { Download, Eye, File, FileText, Image, Link2, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
