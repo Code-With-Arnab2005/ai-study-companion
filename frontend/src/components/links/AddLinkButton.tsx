@@ -74,7 +74,7 @@ export function AddLinkButton() {
             onClick={() => setOpen(true)}
             className="hover:cursor-pointer px-4 py-2 rounded-lg bg-indigo-700 text-white text-sm font-medium hover:bg-indigo-800 transition"
           >
-            Open Dialog
+            + Add Link
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
