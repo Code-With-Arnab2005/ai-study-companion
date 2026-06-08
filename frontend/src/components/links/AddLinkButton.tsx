@@ -18,7 +18,11 @@ import { useState } from "react"
 import toast from "react-hot-toast";
 import SectionLoader from "../SectionLoader";
 
-export function AddLinkButton() {
+interface Props {
+  mutate: any;
+};
+
+export function AddLinkButton({ mutate }: Props) {
   const [linkName, setLinkName] = useState<string>("");
   const [url, setUrl] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -58,6 +62,7 @@ export function AddLinkButton() {
       }
 
       toast.success(data.message);
+      mutate();
       setOpen(false);
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
