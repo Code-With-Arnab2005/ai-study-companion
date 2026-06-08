@@ -1,21 +1,30 @@
 "use client";
 
-import { fetcher, options } from "@/lib/swr/helper";
-import { Link, Document, Subject } from "@/types";
-import { Download, Eye, File, FileText, Image, Link2, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import useSWR from "swr";
+import { Link } from "@/types";
+import { Download, Eye, Link2, MoreVertical, Trash2 } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { createClient } from "@/lib/supabase/client";
 import NextLink from "next/link";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import SectionLoader from "../SectionLoader";
-// import { ConfirmDelete } from "./confirmDelete";
+import ConfirmLinkDelete from "./ConfirmLinkDelete";
+import LinkDetailsModal from "./LinkDetailsModal";
+import { link } from "fs";
 
-const LinksGrid = () => {
-    const limit = 5;
-    const [currPage, setCurrPage] = useState<number>(1);
+interface Props {
+    currLinks: Link[];
+    isLoading: boolean;
+    mutate: any;
+    currPage: number;
+    setCurrPage: React.Dispatch<React.SetStateAction<number>>;
+    limit: number;
+    totalLinks: number;
+    totalPages: number;
+};
+
+const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit, totalLinks, totalPages }: Props) => {
+    const [openPreview, setOpenPreview] = useState<boolean>(false);
+    const [selectedLink, setSelectedLink] = useState<Link | null>(null);
 
     const getFileIcon = () => {
         return <Link2 className="text-red-600" size={24} />;
@@ -41,34 +50,8 @@ const LinksGrid = () => {
         return time.slice(0, 10);
     }
 
-    // filters
-    const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
-
-    const { data, error, isLoading, mutate } = useSWR(
-        `/api/links?page=${currPage}&limit=${limit}`,
-        fetcher,
-        options
-    );
-
-    if (error) {
-        toast.error(error.message || "Something went wrong");
-    }
-
-    const currLinks: Link[] = data?.links || [];
-    const totalLinks: number = data?.totalLinks || 0;
-    const totalPages: number = data?.totalPages || 0;
-
     return (
         <div>
-            <div className="mb-4 flex gap-3">
-                {/* Time Range Filter Options */}
-                {/* <TimeRangeFilterDropdown
-          setFilterTimeRange={setFilterTimeRange}
-          setCurrPage={setCurrPage}
-        /> */}
-
-            </div>
-
             <div className="bg-card border text-card-foreground rounded-2xl overflow-hidden min-h-[40vh]">
                 {/* Table Header */}
                 {/* <div className="grid grid-cols-[1.5fr_2fr_2fr_1fr_0.5fr] gap-4 px-6 py-4 text-[12px] md:text-sm font-medium border-b"> */}
@@ -137,20 +120,22 @@ const LinksGrid = () => {
                                 {/* Actions */}
                                 {/* Desktop View */}
                                 <div className="hidden md:flex justify-end items-center gap-1">
+
+                                    {/* Open Preview */}
                                     <button
-                                        // onClick={() => handleOpenPreview(doc)}
+                                        onClick={() => {
+                                            setOpenPreview(true)
+                                            setSelectedLink(link)
+                                        }}
                                         className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
                                     >
                                         <Eye size={20} />
                                     </button>
-                                    {/* <ConfirmDelete document={doc} fetchDocuments={mutate}> */}
-                                    <button
-                                        // onClick={() => handleDelteFile(doc)}
-                                        className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
-                                        <Trash2 size={16} />
-                                    </button>
-                                    {/* </ConfirmDelete> */}
-                                    {/* Open Preview */}
+
+                                    <ConfirmLinkDelete />
+
+                                    
+                                    
 
                                 </div>
                                 {/* Mobile View */}
@@ -218,6 +203,13 @@ const LinksGrid = () => {
                     </Button>
                 </div>
             </div>
+
+            {/* Open Preview */}
+            <LinkDetailsModal
+                open={openPreview}
+                onOpenChange={setOpenPreview}
+                link={selectedLink}
+            />
         </div>
     );
 };
