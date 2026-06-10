@@ -55,11 +55,11 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
             <div className="bg-card border text-card-foreground rounded-2xl overflow-hidden min-h-[40vh]">
                 {/* Table Header */}
                 {/* <div className="grid grid-cols-[1.5fr_2fr_2fr_1fr_0.5fr] gap-4 px-6 py-4 text-[12px] md:text-sm font-medium border-b"> */}
-                <div className="grid grid-cols-8 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
+                <div className="grid grid-cols-5 md:grid-cols-8 px-6 py-4 text-[12px] md:text-sm font-medium border-b">
                     <span className="col-span-2">Link Name</span>
                     <span className="col-span-2">URL</span>
-                    <span className="col-span-2">Description</span>
-                    <span>Created On</span>
+                    <span className="hidden md:block col-span-2">Description</span>
+                    <span className="hidden md:block">Created On</span>
                     <span className="text-right mr-3">Actions</span>
                 </div>
 
@@ -102,7 +102,7 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                 </span>
 
                                 {/* Description */}
-                                <span className={`col-span-2 text-[8px] md:text-sm ${link.description?.length === 0 ? "text-gray-500" : ""}`}>
+                                <span className={`hidden md:block col-span-2 text-[8px] md:text-sm ${link.description?.length === 0 ? "text-gray-500" : ""}`}>
                                     {link.description?.length === 0 && "No Description Added"}
                                     {link.description?.slice(0, 30)} {(link.description?.length ?? 0) >= 30 && <span>...</span>}
                                 </span>
@@ -113,9 +113,9 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                     {getCreatedTimeofDocument(link.created_at as string)}
                                 </span>
                                 {/* Mobile View */}
-                                <span className="block md:hidden ml-2 text-[7px] text-card-secondary-foreground">
+                                {/* <span className="block md:hidden ml-2 text-[7px] text-card-secondary-foreground">
                                     {getCreatedTimeofDocumentForMobile(link.created_at as string)}
-                                </span>
+                                </span> */}
 
                                 {/* Actions */}
                                 {/* Desktop View */}
@@ -132,14 +132,17 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                         <Eye size={20} />
                                     </button>
 
-                                    <ConfirmLinkDelete />
+                                    <ConfirmLinkDelete
+                                        link_id={link.id}
+                                        mutate={mutate}
+                                    />
 
                                     
-                                    
+
 
                                 </div>
                                 {/* Mobile View */}
-                                <div className="md:hidden ml-10">
+                                <div className="md:hidden ml-25">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <MoreVertical className="border-2 rounded-sm flex items-center justify-center" width={15} height={15} />
@@ -150,7 +153,10 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                                 {/* Open Preview */}
                                                 <DropdownMenuLabel>
                                                     <button
-                                                        // onClick={() => handleOpenPreview(doc)}
+                                                        onClick={() => {
+                                                            setOpenPreview(true)
+                                                            setSelectedLink(link)
+                                                        }}
                                                         className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
                                                     >
                                                         <Eye size={20} />

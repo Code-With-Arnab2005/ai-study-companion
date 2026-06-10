@@ -18,7 +18,7 @@ const LinksComponent = () => {
     const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
 
     const { data, error, isLoading, mutate } = useSWR(
-        `/api/links?page=${currPage}&limit=${limit}`,
+        `/api/links?page=${currPage}&limit=${limit}&timeRange=${filterTimeRange}`,
         fetcher,
         options
     );
