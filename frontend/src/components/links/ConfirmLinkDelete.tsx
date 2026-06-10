@@ -14,6 +14,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import SectionLoader from '../SectionLoader';
 
 interface Props {
     link_id: string | null;
@@ -21,6 +22,7 @@ interface Props {
 };
 
 const ConfirmLinkDelete = ({ link_id, mutate }: Props) => {
+    const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleDelete = async () => {
@@ -46,14 +48,16 @@ const ConfirmLinkDelete = ({ link_id, mutate }: Props) => {
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
         } finally {
+            setOpen(false);
             setLoading(false);
         }
     }
 
     return (
-        <AlertDialog>
+        <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <button
+                    onClick={() => setOpen(true)}
                     disabled={loading}
                     className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
                     <Trash2 size={16} />
@@ -64,12 +68,14 @@ const ConfirmLinkDelete = ({ link_id, mutate }: Props) => {
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete your
-                        Subject.
+                        Link.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction disabled={loading} onClick={() => handleDelete()}>Delete</AlertDialogAction>
+                    <AlertDialogAction disabled={loading} onClick={() => handleDelete()}>
+                        {loading ? <SectionLoader /> : "Delete"}
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
