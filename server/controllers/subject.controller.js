@@ -648,7 +648,8 @@ const getPaginatedDocuments = async (req, res) => {
             const today = new Date();
             const fromDate = new Date(today);
 
-            if (normalizedTimeRange === "last 3 days") fromDate.setDate(today.getDate() - 3);
+            if(normalizedTimeRange === "today") fromDate.setDate(today.getDate() - 1);
+            else if (normalizedTimeRange === "last 3 days") fromDate.setDate(today.getDate() - 3);
             else if (normalizedTimeRange === "last 7 days") fromDate.setDate(today.getDate() - 7);
             else if (normalizedTimeRange === "last 1 month") fromDate.setMonth(today.getMonth() - 1);
             else if (normalizedTimeRange === "last 3 months") fromDate.setMonth(today.getMonth() - 3);

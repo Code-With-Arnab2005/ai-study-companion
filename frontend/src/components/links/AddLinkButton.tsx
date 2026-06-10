@@ -31,8 +31,6 @@ export function AddLinkButton({ mutate }: Props) {
   const [open, setOpen] = useState<boolean>(false);
 
   const handleAddLink = async () => {
-    console.log("submitted");
-
     if(!linkName.trim() || !url.trim()){
       toast.error("Link name and URL cannot be empty");
       return;

@@ -1,3 +1,4 @@
+import { validTimeRanges } from "../contants.js";
 import { getUserFromToken } from "../lib/getUserFromToken.js";
 import { supabase } from "../lib/supabase/supabaseClient.js";
 
@@ -95,7 +96,12 @@ const getAllPaginatedLinks = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        let { page = 1, limit = 5 } = req.query;
+        let { page = 1, limit = 5, timeRange = "ALL" } = req.query;
+
+        // verify for filters
+        if (!validTimeRanges.includes(timeRange.toLowerCase())) {
+            return res.status(400).json({ success: false, message: "Selected Time Range is invalid" });
+        }
 
         page = Math.max(parseInt(page) || 1, 1);
         limit = Math.max(parseInt(limit) || 5, 5);
@@ -109,6 +115,24 @@ const getAllPaginatedLinks = async (req, res) => {
             .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 
+
+        // filter by time-range
+        const normalizedTimeRange = timeRange.toLowerCase();
+        if (normalizedTimeRange !== "all") {
+            const today = new Date();
+            const fromDate = new Date(today);
+            
+            if(normalizedTimeRange === "today") fromDate.setDate(today.getDate() - 1);
+            else if (normalizedTimeRange === "last 3 days") fromDate.setDate(today.getDate() - 3);
+            else if (normalizedTimeRange === "last 7 days") fromDate.setDate(today.getDate() - 7);
+            else if (normalizedTimeRange === "last 1 month") fromDate.setMonth(today.getMonth() - 1);
+            else if (normalizedTimeRange === "last 3 months") fromDate.setMonth(today.getMonth() - 3);
+            else if (normalizedTimeRange === "last 1 year") fromDate.setFullYear(today.getFullYear() - 1);
+
+            query = query
+                .gte("created_at", fromDate.toISOString())
+                .lte("created_at", today.toISOString());
+        }
 
         // filter by page and limit
         query = query.range(from, to);
@@ -176,7 +200,7 @@ const deleteLinkById = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        const { id: link_id } = req.query;
+        const { link_id } = req.query;
         if (!link_id) {
             return res.status(400).json({ success: false, message: "Link id not found" });
         }

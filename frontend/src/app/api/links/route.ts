@@ -16,9 +16,10 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "5";
+    const timeRange = searchParams.get("timeRange") || "ALL";
     
     const res = await axios.get(
-      `/get-all-paginated-links?page=${page}&limit=${limit}`,
+      `/get-all-paginated-links?page=${page}&limit=${limit}&timeRange=${timeRange}`,
       {
         headers: {
           Authorization: `Bearer ${token}`
