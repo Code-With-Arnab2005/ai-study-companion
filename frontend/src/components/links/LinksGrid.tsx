@@ -10,6 +10,7 @@ import SectionLoader from "../SectionLoader";
 import ConfirmLinkDelete from "./ConfirmLinkDelete";
 import LinkDetailsModal from "./LinkDetailsModal";
 import { link } from "fs";
+import UpdateLinkDialog from "./UpdateLinkDialog";
 
 interface Props {
     currLinks: Link[];
@@ -132,13 +133,17 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                         <Eye size={20} />
                                     </button>
 
+                                    {/* Delete a Link */}
                                     <ConfirmLinkDelete
                                         link_id={link.id}
                                         mutate={mutate}
                                     />
 
-                                    
-
+                                    {/* Update a Link */}
+                                    <UpdateLinkDialog
+                                        link={link}
+                                        mutate={mutate}
+                                    />
 
                                 </div>
                                 {/* Mobile View */}
@@ -151,36 +156,27 @@ const LinksGrid = ({ currLinks, isLoading, mutate, currPage, setCurrPage, limit,
                                             <DropdownMenuGroup>
 
                                                 {/* Open Preview */}
-                                                <DropdownMenuLabel>
-                                                    <button
-                                                        onClick={() => {
-                                                            setOpenPreview(true)
-                                                            setSelectedLink(link)
-                                                        }}
-                                                        className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
-                                                    >
-                                                        <Eye size={20} />
-                                                    </button>
-                                                </DropdownMenuLabel>
+                                                <button
+                                                    onClick={() => {
+                                                        setOpenPreview(true)
+                                                        setSelectedLink(link)
+                                                    }}
+                                                    className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
+                                                >
+                                                    <Eye size={20} />
+                                                </button>
 
-                                                {/* Download File */}
-                                                <DropdownMenuItem>
-                                                    <button
-                                                        // onClick={() => handleDownloadFile(doc)}
-                                                        className="cursor-pointer p-2 rounded-md hover:bg-green-50 text-green-500 transition"
-                                                    >
-                                                        <Download size={20} />
-                                                    </button>
-                                                </DropdownMenuItem>
+                                                {/* Delete a Link */}
+                                                <ConfirmLinkDelete
+                                                    link_id={link.id}
+                                                    mutate={mutate}
+                                                />
 
-                                                {/* Delete File */}
-                                                <DropdownMenuItem>
-                                                    <button
-                                                        // onClick={() => handleDelteFile(doc)}
-                                                        className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 transition">
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </DropdownMenuItem>
+                                                {/* Update a Link */}
+                                                <UpdateLinkDialog
+                                                    link={link}
+                                                    mutate={mutate}
+                                                />
 
                                             </DropdownMenuGroup>
                                         </DropdownMenuContent>
