@@ -9,6 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
 import TimeRangeFilterDropdown from '../documents/TimeRangeFilterDropdown';
+import SearchByLinkName from './SearchByLinkName';
 
 const LinksComponent = () => {
     const limit = 5;
@@ -16,9 +17,10 @@ const LinksComponent = () => {
 
     // filters
     const [filterTimeRange, setFilterTimeRange] = useState<string>("ALL");
+    const [searchFilter, setSearchFilter] = useState<string>("");
 
     const { data, error, isLoading, mutate } = useSWR(
-        `/api/links?page=${currPage}&limit=${limit}&timeRange=${filterTimeRange}`,
+        `/api/links?page=${currPage}&limit=${limit}&timeRange=${filterTimeRange}&searchFilter=${searchFilter}`,
         fetcher,
         options
     );
@@ -42,6 +44,12 @@ const LinksComponent = () => {
                     <TimeRangeFilterDropdown
                         setFilterTimeRange={setFilterTimeRange}
                         setCurrPage={setCurrPage}
+                    />
+
+                    {/* Search Filter */}
+                    <SearchByLinkName
+                        setCurrPage={setCurrPage}
+                        setSearchFilter={setSearchFilter}
                     />
 
                 </div>

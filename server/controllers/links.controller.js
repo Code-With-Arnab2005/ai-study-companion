@@ -96,7 +96,7 @@ const getAllPaginatedLinks = async (req, res) => {
             return res.status(400).json({ success: false, message: "User is unauthorized" });
         }
 
-        let { page = 1, limit = 5, timeRange = "ALL" } = req.query;
+        let { page = 1, limit = 5, timeRange = "ALL", searchFilter = "" } = req.query;
 
         // verify for filters
         if (!validTimeRanges.includes(timeRange.toLowerCase())) {
@@ -115,6 +115,11 @@ const getAllPaginatedLinks = async (req, res) => {
             .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 
+
+        // filter by searchFilter
+        if(searchFilter?.length > 0){
+            query = query.ilike("link_name", `%${searchFilter}%`);
+        }
 
         // filter by time-range
         const normalizedTimeRange = timeRange.toLowerCase();
