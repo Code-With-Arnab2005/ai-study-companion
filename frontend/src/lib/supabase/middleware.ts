@@ -9,7 +9,7 @@ const publicPaths = [
   '/auth/callback',
   "/forgot-password",
   "/update-password",
-  "/view-document"
+  "/view-document",
 ];
 
 export async function updateSession(request: NextRequest) {
