@@ -8,7 +8,8 @@ const publicPaths = [
   '/verify-email',
   '/auth/callback',
   "/forgot-password",
-  "/update-password"
+  "/update-password",
+  "/view-document"
 ];
 
 export async function updateSession(request: NextRequest) {
