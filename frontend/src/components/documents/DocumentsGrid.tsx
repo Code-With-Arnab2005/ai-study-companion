@@ -2,7 +2,7 @@
 
 import { fetcher, options } from "@/lib/swr/helper";
 import { Document, Subject } from "@/types";
-import { Download, Eye, File, FileText, Image, MoreHorizontal, MoreVertical, Presentation, Text, Trash2, X } from "lucide-react";
+import { Download, Eye, EyeClosed, EyeIcon, File, FileText, Globe, Image, Lock, MoreHorizontal, MoreVertical, Presentation, Share2, Text, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
@@ -179,12 +179,55 @@ const DocumentsGrid = () => {
       toast.error(error ?? error?.message ?? "Error Downloading Document");
     }
   }
+  const handleShareDocument = async (doc: Document) => {
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
+    const url = `${baseUrl}/view-document?id=${doc.id}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link Copied!");
+    } catch (error: any) {
+      toast.error("Failed to Copy: ", error)
+    }
+  }
+  const handleChangeVisibility = async (doc: Document) => {
+    setVisibilityLoading((prev) => ({
+      ...prev,
+      [String(doc.id)]: true
+    }));
+
+    try {
+      const res = await fetch(`/api/documents/change-visibility?id=${doc.id}&is_public=${doc.is_public}`, {
+        method: "POST"
+      })
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.error(data.message ?? "Something went wrong");
+        setVisibilityLoading((prev) => ({
+          ...prev,
+          [String(doc.id)]: false
+        }));
+        return;
+      }
+      toast.success(data.message);
+      mutate();
+    } catch (error: any) {
+      toast.error(error.message ?? "Something went wrong");
+    } finally {
+      setVisibilityLoading((prev) => ({
+        ...prev,
+        [String(doc.id)]: false
+      }));
+    }
+  }
 
 
   const [currPage, setCurrPage] = useState<number>(1);
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [previewSignedUrl, setPreviewSignedUrl] = useState<string | null>(null);
+  const [visibilityLoading, setVisibilityLoading] = useState<Record<string, boolean>>({});
 
   // filters
   const [filterSubjectId, setFilterSubjectId] = useState<string>("ALL");
@@ -307,7 +350,7 @@ const DocumentsGrid = () => {
 
                 {/* Actions */}
                 {/* Desktop View */}
-                <div className="hidden md:flex justify-end items-center gap-1">
+                <div className="hidden md:flex justify-end items-center">
                   <button
                     onClick={() => handleOpenPreview(doc)}
                     className="cursor-pointer p-2 rounded-md hover:bg-blue-50 text-blue-500 transition"
@@ -329,6 +372,35 @@ const DocumentsGrid = () => {
                       <Trash2 size={16} />
                     </button>
                   </ConfirmDelete>
+
+                  {/* Change visibility */}
+                  <button
+                    onClick={() => handleChangeVisibility(doc)}
+                    className={`p-2 rounded-md transition cursor-pointer ${doc.is_public
+                      ? "text-green-500 hover:bg-green-50 dark:hover:bg-green-950/30"
+                      : "text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                  >
+                    {visibilityLoading[String(doc.id)] ? (
+                      <SectionLoader />
+                    ) : doc.is_public ? (
+                      <Globe size={16} />
+                    ) : (
+                      <Lock size={16} />
+                    )}
+                  </button>
+
+                  {/* Share Public Link of this document */}
+                  <button
+                    onClick={() => handleShareDocument(doc)}
+                    disabled={!doc.is_public}
+                    className={`p-2 rounded-md transition cursor-pointer ${doc.is_public
+                        ? "text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                        : "text-gray-600 cursor-not-allowed"
+                      }`}
+                  >
+                    <Share2 size={16} />
+                  </button>
 
                 </div>
                 {/* Mobile View */}

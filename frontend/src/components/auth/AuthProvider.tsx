@@ -9,7 +9,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
 
     const authRoutes = ["/login", "/signup", "/verify-email", "/forgot-password"];
-    const publicRoutes = ["/update-password", "/"];
+    const publicRoutes = ["/update-password", "/", "/view-document"];
     const isPublicRoute = publicRoutes.some(route => pathname === route);
     const isAuthRoute = authRoutes.some(route => pathname === route);
 
