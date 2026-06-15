@@ -1,12 +1,13 @@
+import Loader from '@/components/Loader'
 import PageWrapper from '@/components/PageWrapper'
 import DocumentViewer from '@/components/view-document/DocumentViewer'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const page = () => {
   return (
-    // <PageWrapper>
-        <DocumentViewer />
-    // </PageWrapper>
+    <Suspense fallback={<Loader />}>
+      <DocumentViewer />
+    </Suspense>
   )
 }
 
