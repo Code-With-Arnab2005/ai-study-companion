@@ -25,6 +25,7 @@ export const userExitsts = async (email: string) => {
 
 export const getCurrentUser = async () => {
     const res = await axios.get("/get-current-user");
+    console.log("res: ", res);
     return res;
 };
 

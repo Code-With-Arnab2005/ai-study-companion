@@ -47,7 +47,8 @@ export type Document = {
     subject_id: string | null,
     user_id: string | null,
     created_at: string | null,
-    subject_name: string | null
+    subject_name: string | null,
+    is_public: boolean | null,
 }
 
 export type AIGeneratedNotes = {
