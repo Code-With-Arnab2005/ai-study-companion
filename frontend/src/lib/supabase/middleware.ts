@@ -45,6 +45,10 @@ export async function updateSession(request: NextRequest) {
     (path) => pathname === path || pathname.startsWith(path + '/')
   );
 
+  console.log("middleware pathname: ", pathname);
+  console.log("middleware isPublicpath: ", isPublicPath);
+  console.log("middleware user: ", user);
+
   // 🚫 Not logged in → block protected routes
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
@@ -59,6 +63,8 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
+
+  console.log("passed both checks!");
 
   return response;
 }
