@@ -10,6 +10,10 @@ const publicPaths = [
   "/forgot-password",
   "/update-password",
   "/view-document",
+
+  // public api routes
+  "/api/documents/get-document-by-id",
+  "/api/documents/create-signed-url"
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -45,9 +49,9 @@ export async function updateSession(request: NextRequest) {
     (path) => pathname === path || pathname.startsWith(path + '/')
   );
 
-  console.log("middleware pathname: ", pathname);
-  console.log("middleware isPublicpath: ", isPublicPath);
-  console.log("middleware user: ", user);
+  // console.log("middleware pathname: ", pathname);
+  // console.log("middleware isPublicpath: ", isPublicPath);
+  // console.log("middleware user: ", user);
 
   // 🚫 Not logged in → block protected routes
   if (!user && !isPublicPath) {
@@ -64,7 +68,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  console.log("passed both checks!");
+  // console.log("passed both checks!");
 
   return response;
 }
